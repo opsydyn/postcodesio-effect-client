@@ -1,0 +1,17 @@
+title: Nearest Postcodes Response
+type: object
+required:
+  - status
+  - result
+properties:
+  status:
+    type: integer
+    format: int32
+    enum:
+      - 200
+  result:
+    type: array
+    items:
+      oneOf:
+        - $ref: "../schemas/NearestPostcode.yaml"
+    description: "Array of nearest postcodes sorted by distance"

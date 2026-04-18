@@ -1,0 +1,18 @@
+{
+	"$schema": "https://raw.githubusercontent.com/Effect-TS/language-service/refs/heads/main/schema.json",
+	"compilerOptions": {
+		"target": "ES2022",
+		"lib": ["ES2022"],
+		"types": ["bun-types", "node"],
+		"module": "Preserve",
+		"moduleResolution": "Bundler",
+		"strict": true,
+		"noEmit": true,
+		"verbatimModuleSyntax": true,
+		"allowImportingTsExtensions": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"plugins": [{ "name": "@effect/language-service" }]
+	},
+	"include": ["gen/**/*.ts", "scripts/**/*.ts", "test/**/*.ts"]
+}

@@ -1,0 +1,32 @@
+get:
+  tags:
+    - Places
+  summary: Find a Place by ID
+  description:
+    $ref: ../md/places.md
+  operationId: FindPlace
+  parameters:
+    - name: code
+      in: path
+      description: Specifies the place you wish to query
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+  responses:
+    "200":
+      description: Success
+      content:
+        application/json:
+          schema:
+            $ref: "../components/responses/PlaceResponse.yaml"
+  x-codeSamples:
+    - lang: "http"
+      label: "URL"
+      source: |
+        https://api.postcodes.io/places/osgb4000000074813508
+    - lang: "cURL"
+      label: "CLI"
+      source: |
+        curl -k -G 'https://api.postcodes.io/places/osgb4000000074813508'

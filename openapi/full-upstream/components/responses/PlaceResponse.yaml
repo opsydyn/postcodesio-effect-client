@@ -1,0 +1,14 @@
+title: Place Response
+type: object
+required:
+  - status
+  - result
+properties:
+  status:
+    type: integer
+    format: int32
+    enum:
+      - 200
+  result:
+    $ref: "../schemas/Place.yaml"
+    description: "Data for a given place"

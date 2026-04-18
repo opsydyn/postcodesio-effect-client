@@ -1,0 +1,15 @@
+title: Outcode Response
+type: object
+required:
+  - status
+  - result
+properties:
+  status:
+    type: integer
+    format: int32
+    enum:
+      - 200
+  result:
+    description: "Comprehensive geographical and administrative data for the specified outcode, including location coordinates, administrative boundaries, and related postal information"
+    oneOf:
+      - $ref: "../schemas/Outcode.yaml"

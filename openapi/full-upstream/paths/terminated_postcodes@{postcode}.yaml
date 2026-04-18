@@ -1,0 +1,35 @@
+get:
+  tags:
+    - Terminated Postcodes
+  summary: Lookup Terminated Postcodes
+  description:
+    $ref: ../md/terminated-postcodes.md
+  operationId: LookupTerminatedPostcode
+  parameters:
+    - name: postcode
+      in: path
+      description: Postcode to query
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+  responses:
+    "200":
+      description: Success
+      content:
+        application/json:
+          schema:
+            $ref: "../components/responses/TerminatedPostcodeResponse.yaml"
+    "404":
+      description: Postcode not found
+  x-codeSamples:
+    - lang: "http"
+      label: "URL"
+      source: |
+        api.postcodes.io/terminated_postcodes/E1W1UU
+    - lang: "cURL"
+      label: "CLI"
+      source: |
+        curl -G -k \
+        --url 'https://api.postcodes.io/terminated_postcodes/E1W1UU'

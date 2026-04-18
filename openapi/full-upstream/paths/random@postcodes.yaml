@@ -1,0 +1,33 @@
+get:
+  tags:
+    - Postcodes
+  summary: Get a Random Postcode
+  operationId: randomPostcode
+  description: "Returns a randomly selected postcode along with comprehensive geographic, administrative, and statistical data associated with that postcode."
+  parameters:
+    - name: outcode
+      in: query
+      description: Filters random postcodes by outcode. Returns null if invalid outcode.
+      style: form
+      explode: false
+      schema:
+        title: Outward code
+        type: string
+        example: SW1A
+  responses:
+    "200":
+      description: "Success"
+      content:
+        application/json:
+          schema:
+            $ref: "../components/responses/PostcodeResponse.yaml"
+  x-codeSamples:
+    - lang: "http"
+      label: "URL"
+      source: |
+        https://api.postcodes.io/random/postcodes
+    - lang: "cURL"
+      label: "CLI"
+      source: |
+        curl -G -k \
+        --url 'https://api.postcodes.io/random/postcodes'

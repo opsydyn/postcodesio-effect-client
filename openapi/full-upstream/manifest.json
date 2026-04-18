@@ -1,0 +1,263 @@
+{
+  "sourceBaseUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/",
+  "entryRelativePath": "openapi.yaml",
+  "fileCount": 33,
+  "files": [
+    {
+      "relativePath": "components/responses/NearestPostcodesResponse.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/components/responses/NearestPostcodesResponse.yaml",
+      "bytes": 324,
+      "localRefs": [
+        "../schemas/NearestPostcode.yaml"
+      ]
+    },
+    {
+      "relativePath": "components/responses/OutcodeResponse.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/components/responses/OutcodeResponse.yaml",
+      "bytes": 397,
+      "localRefs": [
+        "../schemas/Outcode.yaml"
+      ]
+    },
+    {
+      "relativePath": "components/responses/PlaceResponse.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/components/responses/PlaceResponse.yaml",
+      "bytes": 233,
+      "localRefs": [
+        "../schemas/Place.yaml"
+      ]
+    },
+    {
+      "relativePath": "components/responses/PlacesResponse.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/components/responses/PlacesResponse.yaml",
+      "bytes": 263,
+      "localRefs": [
+        "../schemas/Place.yaml"
+      ]
+    },
+    {
+      "relativePath": "components/responses/PostcodeResponse.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/components/responses/PostcodeResponse.yaml",
+      "bytes": 358,
+      "localRefs": [
+        "../schemas/Postcode.yaml"
+      ]
+    },
+    {
+      "relativePath": "components/responses/PostcodesResponse.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/components/responses/PostcodesResponse.yaml",
+      "bytes": 358,
+      "localRefs": [
+        "../schemas/Postcode.yaml"
+      ]
+    },
+    {
+      "relativePath": "components/responses/ScottishPostcodeResponse.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/components/responses/ScottishPostcodeResponse.yaml",
+      "bytes": 290,
+      "localRefs": [
+        "../schemas/ScottishPostcodes.yaml"
+      ]
+    },
+    {
+      "relativePath": "components/responses/TerminatedPostcodeResponse.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/components/responses/TerminatedPostcodeResponse.yaml",
+      "bytes": 292,
+      "localRefs": [
+        "../schemas/TerminatedPostcode.yaml"
+      ]
+    },
+    {
+      "relativePath": "components/schemas/NearestPostcode.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/components/schemas/NearestPostcode.yaml",
+      "bytes": 457,
+      "localRefs": [
+        "./Postcode.yaml"
+      ]
+    },
+    {
+      "relativePath": "components/schemas/Outcode.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/components/schemas/Outcode.yaml",
+      "bytes": 2087,
+      "localRefs": []
+    },
+    {
+      "relativePath": "components/schemas/Place.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/components/schemas/Place.yaml",
+      "bytes": 4125,
+      "localRefs": []
+    },
+    {
+      "relativePath": "components/schemas/Postcode.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/components/schemas/Postcode.yaml",
+      "bytes": 16521,
+      "localRefs": []
+    },
+    {
+      "relativePath": "components/schemas/ScottishPostcodes.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/components/schemas/ScottishPostcodes.yaml",
+      "bytes": 995,
+      "localRefs": []
+    },
+    {
+      "relativePath": "components/schemas/TerminatedPostcode.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/components/schemas/TerminatedPostcode.yaml",
+      "bytes": 1266,
+      "localRefs": []
+    },
+    {
+      "relativePath": "description.md",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/description.md",
+      "bytes": 589,
+      "localRefs": []
+    },
+    {
+      "relativePath": "md/bulk-postcode-lookup.md",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/md/bulk-postcode-lookup.md",
+      "bytes": 508,
+      "localRefs": []
+    },
+    {
+      "relativePath": "md/outcode.md",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/md/outcode.md",
+      "bytes": 225,
+      "localRefs": []
+    },
+    {
+      "relativePath": "md/places.md",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/md/places.md",
+      "bytes": 189,
+      "localRefs": []
+    },
+    {
+      "relativePath": "md/postcode-query.md",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/md/postcode-query.md",
+      "bytes": 901,
+      "localRefs": []
+    },
+    {
+      "relativePath": "md/postcode.md",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/md/postcode.md",
+      "bytes": 121,
+      "localRefs": []
+    },
+    {
+      "relativePath": "md/scottish-postcodes.md",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/md/scottish-postcodes.md",
+      "bytes": 393,
+      "localRefs": []
+    },
+    {
+      "relativePath": "md/terminated-postcodes.md",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/md/terminated-postcodes.md",
+      "bytes": 297,
+      "localRefs": []
+    },
+    {
+      "relativePath": "openapi.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/openapi.yaml",
+      "bytes": 1555,
+      "localRefs": [
+        "./description.md",
+        "paths/outcodes@{outcode}.yaml",
+        "paths/places.yaml",
+        "paths/places@{code}.yaml",
+        "paths/postcodes.yaml",
+        "paths/postcodes@{postcode}.yaml",
+        "paths/postcodes@{postcode}@nearest.yaml",
+        "paths/random@places.yaml",
+        "paths/random@postcodes.yaml",
+        "paths/scotland@postcodes@{postcode}.yaml",
+        "paths/terminated_postcodes@{postcode}.yaml"
+      ]
+    },
+    {
+      "relativePath": "paths/outcodes@{outcode}.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/paths/outcodes@%7Boutcode%7D.yaml",
+      "bytes": 1081,
+      "localRefs": [
+        "../components/responses/OutcodeResponse.yaml",
+        "../md/outcode.md"
+      ]
+    },
+    {
+      "relativePath": "paths/places.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/paths/places.yaml",
+      "bytes": 637,
+      "localRefs": [
+        "../components/responses/PlacesResponse.yaml"
+      ]
+    },
+    {
+      "relativePath": "paths/places@{code}.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/paths/places@%7Bcode%7D.yaml",
+      "bytes": 755,
+      "localRefs": [
+        "../components/responses/PlaceResponse.yaml",
+        "../md/places.md"
+      ]
+    },
+    {
+      "relativePath": "paths/postcodes.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/paths/postcodes.yaml",
+      "bytes": 4032,
+      "localRefs": [
+        "../components/responses/PostcodeResponse.yaml",
+        "../components/responses/PostcodesResponse.yaml",
+        "../md/bulk-postcode-lookup.md",
+        "../md/postcode-query.md"
+      ]
+    },
+    {
+      "relativePath": "paths/postcodes@{postcode}.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/paths/postcodes@%7Bpostcode%7D.yaml",
+      "bytes": 818,
+      "localRefs": [
+        "../components/responses/PostcodeResponse.yaml",
+        "../md/postcode.md"
+      ]
+    },
+    {
+      "relativePath": "paths/postcodes@{postcode}@nearest.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/paths/postcodes@%7Bpostcode%7D@nearest.yaml",
+      "bytes": 950,
+      "localRefs": [
+        "../components/responses/NearestPostcodesResponse.yaml"
+      ]
+    },
+    {
+      "relativePath": "paths/random@places.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/paths/random@places.yaml",
+      "bytes": 716,
+      "localRefs": [
+        "../components/responses/PlaceResponse.yaml"
+      ]
+    },
+    {
+      "relativePath": "paths/random@postcodes.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/paths/random@postcodes.yaml",
+      "bytes": 946,
+      "localRefs": [
+        "../components/responses/PostcodeResponse.yaml"
+      ]
+    },
+    {
+      "relativePath": "paths/scotland@postcodes@{postcode}.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/paths/scotland@postcodes@%7Bpostcode%7D.yaml",
+      "bytes": 874,
+      "localRefs": [
+        "../components/responses/ScottishPostcodeResponse.yaml",
+        "../md/scottish-postcodes.md"
+      ]
+    },
+    {
+      "relativePath": "paths/terminated_postcodes@{postcode}.yaml",
+      "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/paths/terminated_postcodes@%7Bpostcode%7D.yaml",
+      "bytes": 861,
+      "localRefs": [
+        "../components/responses/TerminatedPostcodeResponse.yaml",
+        "../md/terminated-postcodes.md"
+      ]
+    }
+  ]
+}

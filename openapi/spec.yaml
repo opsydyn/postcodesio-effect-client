@@ -1,0 +1,299 @@
+openapi: 3.1.0
+info:
+  title: Postcodes.io Assessment Subset
+  version: 3.5.1-spike
+  description: |
+    Narrowed subset of the upstream postcodes.io OpenAPI contract used only for
+    assessing @effect/openapi-generator. Derived from the upstream postcodes.io
+    spec and kept intentionally small.
+servers:
+  - url: https://api.postcodes.io
+paths:
+  /postcodes/{postcode}:
+    get:
+      operationId: lookupPostcode
+      summary: Lookup a postcode
+      tags: [Postcodes]
+      parameters:
+        - name: postcode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostcodeEnvelope'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /postcodes:
+    post:
+      operationId: bulkLookupPostcodes
+      summary: Bulk postcode lookup
+      tags: [Postcodes]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkLookupRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkPostcodeEnvelope'
+  /outcodes/{outcode}:
+    get:
+      operationId: findOutcode
+      summary: Find an outward code
+      tags: [Outcodes]
+      parameters:
+        - name: outcode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OutcodeEnvelope'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /places/{code}:
+    get:
+      operationId: findPlace
+      summary: Find a place by ID
+      tags: [Places]
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaceEnvelope'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+components:
+  schemas:
+    ErrorEnvelope:
+      type: object
+      additionalProperties: false
+      required: [status, error]
+      properties:
+        status:
+          type: integer
+          enum: [404]
+        error:
+          type: string
+    PostcodeCodes:
+      type: object
+      additionalProperties: false
+      required: [admin_district, admin_ward, parish, parliamentary_constituency, ccg, ccg_id, ced, lau2, lsoa, msoa, nuts, pfa]
+      properties:
+        admin_district: { type: string }
+        admin_ward: { type: string }
+        parish: { type: string }
+        parliamentary_constituency: { type: string }
+        ccg: { type: string }
+        ccg_id: { type: string }
+        ced: { type: string }
+        lau2: { type: string }
+        lsoa: { type: string }
+        msoa: { type: string }
+        nuts: { type: string }
+        pfa: { type: string }
+    PostcodeResult:
+      type: object
+      additionalProperties: false
+      required:
+        - postcode
+        - quality
+        - eastings
+        - northings
+        - country
+        - nhs_ha
+        - longitude
+        - latitude
+        - european_electoral_region
+        - primary_care_trust
+        - region
+        - lsoa
+        - msoa
+        - parliamentary_constituency
+        - admin_district
+        - admin_ward
+        - ccg
+        - nuts
+        - pfa
+        - codes
+      properties:
+        postcode: { type: string }
+        quality: { type: integer, enum: [1, 2, 3, 4, 5, 6, 9] }
+        eastings: { type: integer }
+        northings: { type: integer }
+        country: { type: string }
+        nhs_ha: { type: string }
+        longitude: { type: number }
+        latitude: { type: number }
+        european_electoral_region: { type: string }
+        primary_care_trust: { type: string }
+        region: { type: string }
+        lsoa: { type: string }
+        msoa: { type: string }
+        parish:
+          type: [string, 'null']
+        parliamentary_constituency: { type: string }
+        admin_county:
+          type: [string, 'null']
+        admin_district: { type: string }
+        admin_ward: { type: string }
+        ccg: { type: string }
+        ced:
+          type: [string, 'null']
+        nuts: { type: string }
+        pfa: { type: string }
+        codes:
+          $ref: '#/components/schemas/PostcodeCodes'
+    PostcodeEnvelope:
+      type: object
+      additionalProperties: false
+      required: [status, result]
+      properties:
+        status: { type: integer, enum: [200] }
+        result:
+          $ref: '#/components/schemas/PostcodeResult'
+    BulkLookupRequest:
+      type: object
+      additionalProperties: false
+      required: [postcodes]
+      properties:
+        postcodes:
+          type: array
+          items:
+            type: string
+          minItems: 1
+    BulkLookupItem:
+      type: object
+      additionalProperties: false
+      required: [query, result]
+      properties:
+        query: { type: string }
+        result:
+          oneOf:
+            - $ref: '#/components/schemas/PostcodeResult'
+            - type: 'null'
+    BulkPostcodeEnvelope:
+      type: object
+      additionalProperties: false
+      required: [status, result]
+      properties:
+        status: { type: integer, enum: [200] }
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/BulkLookupItem'
+    OutcodeResult:
+      type: object
+      additionalProperties: false
+      required: [outcode, longitude, latitude, northings, eastings, admin_county, admin_district, admin_ward, country, parish, parliamentary_constituency]
+      properties:
+        outcode: { type: string }
+        longitude:
+          type: [number, 'null']
+        latitude:
+          type: [number, 'null']
+        northings:
+          type: [integer, 'null']
+        eastings:
+          type: [integer, 'null']
+        admin_county:
+          type: array
+          items: { type: string }
+        admin_district:
+          type: array
+          items: { type: string }
+        admin_ward:
+          type: array
+          items: { type: string }
+        country:
+          type: array
+          items: { type: string }
+        parish:
+          type: array
+          items: { type: string }
+        parliamentary_constituency:
+          type: array
+          items: { type: string }
+    OutcodeEnvelope:
+      type: object
+      additionalProperties: false
+      required: [status, result]
+      properties:
+        status: { type: integer, enum: [200] }
+        result:
+          $ref: '#/components/schemas/OutcodeResult'
+    PlaceResult:
+      type: object
+      additionalProperties: false
+      required: [code, name_1, local_type, outcode, county_unitary, county_unitary_type, region, country, longitude, latitude, eastings, northings, min_eastings, min_northings, max_eastings, max_northings]
+      properties:
+        code: { type: string }
+        name_1: { type: string }
+        name_1_lang:
+          type: [string, 'null']
+        name_2:
+          type: [string, 'null']
+        name_2_lang:
+          type: [string, 'null']
+        local_type: { type: string }
+        outcode: { type: string }
+        county_unitary: { type: string }
+        county_unitary_type: { type: string }
+        district_borough:
+          type: [string, 'null']
+        district_borough_type:
+          type: [string, 'null']
+        region: { type: string }
+        country: { type: string }
+        longitude: { type: number }
+        latitude: { type: number }
+        eastings: { type: integer }
+        northings: { type: integer }
+        min_eastings: { type: integer }
+        min_northings: { type: integer }
+        max_eastings: { type: integer }
+        max_northings: { type: integer }
+    PlaceEnvelope:
+      type: object
+      additionalProperties: false
+      required: [status, result]
+      properties:
+        status: { type: integer, enum: [200] }
+        result:
+          $ref: '#/components/schemas/PlaceResult'
