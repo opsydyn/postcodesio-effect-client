@@ -41,6 +41,35 @@ library does not have to.
 - `gen/programs/` — runnable examples and tiny smoke programs
 - `test/` — Elysia-backed contract tests and local helpers
 
+## Where `@effect/openapi-generator` is actually used
+
+The generator package is used in this repo as a **CLI tool**, not as a direct
+runtime import from handwritten source files.
+
+Concretely:
+
+- `package.json` depends on `@effect/openapi-generator`
+- `bun run generate` runs `openapigen` against `openapi/spec.yaml`
+- `bun run generate:full` runs `openapigen` against
+  `openapi/full-upstream/openapi.bundle.yaml`
+- those commands write committed generated artifacts to:
+  - `gen/generated/PostcodesSpike.ts`
+  - `gen/generated/PostcodesFull.ts`
+
+After generation, the rest of the repo imports the generated files rather than
+`@effect/openapi-generator` itself:
+
+- `gen/client/ApiService.ts` wraps `PostcodesSpike.ts`
+- `test/contract.test.ts` exercises the handwritten wrapper over
+  `PostcodesSpike.ts`
+- `test/fullClient.elysia.test.ts` and `gen/programs/fullClient.ts` use
+  `PostcodesFull.ts`
+
+So if you grep for `@effect/openapi-generator` in handwritten runtime code, you
+should not expect to find direct imports. The dependency is generation-time
+only; the checked-in generated `.ts` files are what the runtime wrapper,
+examples, and tests consume.
+
 ## Narrowed-spec workflow
 
 The smallest useful assessment path uses a self-contained subset of the upstream
