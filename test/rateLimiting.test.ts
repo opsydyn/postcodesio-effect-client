@@ -29,10 +29,9 @@ describe("RateLimiterLive", () => {
 				}),
 			);
 
-			const fiber = yield* client.get("http://test/").pipe(
-				Effect.andThen(client.get("http://test/")),
-				Effect.forkChild,
-			);
+			const fiber = yield* client
+				.get("http://test/")
+				.pipe(Effect.andThen(client.get("http://test/")), Effect.forkChild);
 
 			yield* TestClock.adjust("59 seconds");
 			expect(yield* Ref.get(attempts)).toBe(1);

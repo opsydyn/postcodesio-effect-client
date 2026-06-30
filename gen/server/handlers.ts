@@ -5,7 +5,12 @@ import { makeApiConfig } from "../client/ApiConfig.ts";
 import { makeApiService } from "../client/ApiService.ts";
 import { isApiNotFoundError } from "../client/Errors.ts";
 import { RateLimiterLive } from "../client/RateLimiting.ts";
-import { Api, OutcodeNotFound, PlaceNotFound, PostcodeNotFound } from "./Api.ts";
+import {
+	Api,
+	OutcodeNotFound,
+	PlaceNotFound,
+	PostcodeNotFound,
+} from "./Api.ts";
 
 export const PostcodesApiHandlers = HttpApiBuilder.group(
 	Api,
@@ -18,7 +23,8 @@ export const PostcodesApiHandlers = HttpApiBuilder.group(
 				service.lookupPostcode(params.postcode).pipe(
 					Effect.catchIf(
 						isApiNotFoundError,
-						() => Effect.fail(new PostcodeNotFound({ postcode: params.postcode })),
+						() =>
+							Effect.fail(new PostcodeNotFound({ postcode: params.postcode })),
 						(other) => Effect.die(other),
 					),
 				),
