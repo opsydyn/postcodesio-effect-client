@@ -15,7 +15,8 @@
 		"example:get": "bun run gen/programs/getThing.ts",
 		"example:create": "bun run gen/programs/createThing.ts",
 		"example:fail": "bun run gen/programs/failureThing.ts",
-		"example:full": "bun run gen/programs/fullClient.ts"
+		"example:full": "bun run gen/programs/fullClient.ts",
+		"docs:serve": "bun run gen/server/serve.ts"
 	},
 	"dependencies": {
 		"effect": "4.0.0-beta.92",

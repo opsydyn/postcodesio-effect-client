@@ -39,6 +39,8 @@ library does not have to.
 - `gen/generated/` — raw generated client artifacts
 - `gen/client/` — handwritten wrapper layer over generated code
 - `gen/programs/` — runnable examples and tiny smoke programs
+- `gen/server/` — native `HttpApi` definition + server, generating OpenAPI
+  docs from code instead of consuming an upstream spec
 - `test/` — Elysia-backed contract tests and local helpers
 
 ## Where `@effect/openapi-generator` is actually used
@@ -136,6 +138,28 @@ This wraps every call through `HttpClient.withRateLimiter`, backed by an
 in-memory `RateLimiterStore` with adaptive 429/`Retry-After` feedback
 (effect `4.0.0-beta.88`). Tune pacing via `ApiConfig.rateLimit`.
 
+## Native OpenAPI docs
+
+`gen/server/` defines a small `HttpApi` (`effect/unstable/httpapi`) mirroring
+the narrowed-spec endpoints, reusing the same `Schema`s already generated into
+`gen/generated/PostcodesSpike.ts`. Its handlers proxy real requests to
+postcodes.io through the existing `ApiService` wrapper. Run:
+
+```bash
+bun run docs:serve
+```
+
+This serves:
+
+- `GET /openapi.json` — the OpenAPI document generated natively from the
+  `HttpApi` definition via `OpenApi.fromApi`, no upstream spec file involved
+- `GET /docs` — an interactive Scalar reference page rendering that document
+- the live, working endpoints themselves (`/postcodes/:postcode`,
+  `/postcodes`, `/outcodes/:outcode`, `/places/:code`)
+
+This is the reverse direction from the generator workflow above: instead of
+spec → generated client, it's effect-native code → generated spec.
+
 ## Testing
 
 The default test lane is local and deterministic.
@@ -180,6 +204,7 @@ bun run example:get
 bun run example:create
 bun run example:fail
 bun run example:full
+bun run docs:serve
 ```
 
 ## Related repositories
