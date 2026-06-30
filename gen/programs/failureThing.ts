@@ -3,9 +3,11 @@ import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient";
 import { makeApiConfig } from "../client/ApiConfig.ts";
 import { makeApiService } from "../client/ApiService.ts";
 import { isApiNotFoundError } from "../client/Errors.ts";
+import { RateLimiterLive } from "../client/RateLimiting.ts";
 
 const serviceEffect = makeApiService(makeApiConfig()).pipe(
 	Effect.provide(FetchHttpClient.layer),
+	Effect.provide(RateLimiterLive),
 );
 
 const service = await Effect.runPromise(serviceEffect);

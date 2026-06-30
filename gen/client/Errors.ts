@@ -1,6 +1,7 @@
 import * as Data from "effect/Data";
 import type { SchemaError } from "effect/Schema";
 import type * as HttpClientError from "effect/unstable/http/HttpClientError";
+import type * as RateLimiter from "effect/unstable/persistence/RateLimiter";
 import type * as Generated from "../generated/PostcodesSpike.ts";
 
 export interface ApiNotFoundError {
@@ -37,7 +38,8 @@ export type GeneratedNotFoundError =
 export type ApiServiceError =
 	| HttpClientError.HttpClientError
 	| SchemaError
-	| ApiNotFoundError;
+	| ApiNotFoundError
+	| RateLimiter.RateLimiterError;
 
 export const isApiNotFoundError = (input: unknown): input is ApiNotFoundError =>
 	typeof input === "object" &&
