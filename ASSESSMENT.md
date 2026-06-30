@@ -320,3 +320,27 @@ Observed directly in generator-emitted file structure:
 
 The tool is real.
 It is just not yet boring enough, or polished enough out of the box, to trust as the default foundation for this library.
+
+## Update: 2026-06-30 — effect 4.0.0-beta.50 → beta.92
+
+Bumped `effect`, `@effect/platform-node`, and `@effect/openapi-generator` from
+`4.0.0-beta.50` to `4.0.0-beta.92`. Findings:
+
+- clean `bun install`, clean `tsc --noEmit`, all tests passing with no source
+  changes required for compatibility
+- regenerating `gen/generated/PostcodesSpike.ts` with the bumped generator
+  produces one cosmetic diff: the generic bound on `decodeSuccess`/`decodeError`
+  narrows from `Schema.Top` to `Schema.Constraint` (generator-side change from
+  beta.86's Schema type-performance work) — not hand-applied, a natural
+  byproduct of `bun run generate`
+- added `RateLimiterLive` (`gen/client/RateLimiting.ts`), built on effect
+  beta.88's `RateLimiterStore` adaptive consume/feedback API plus
+  `HttpClient.withRateLimiter`, so all four client calls now back off
+  automatically on postcodes.io rate-limit responses instead of failing
+  outright
+- fixed a real path-segment-escape bug in `ApiService.ts`: an unencoded `..`
+  in a postcode/outcode/place argument could route a request to an unrelated
+  endpoint (verified: `findOutcode("../places/...")` reached `/places/:code`
+  instead of 404ing); fixed with `encodeURIComponent` on path segments
+- simplified `Errors.ts`'s two `_tag` duck-typing checks to use the existing
+  `effect/Predicate` `isTagged` guard

@@ -119,6 +119,23 @@ Important current finding:
 - the bundling step also normalizes one upstream boolean annotation quirk where
   `widesearch` used string `default` and `example` values
 
+## Rate limiting
+
+`makeApiService` requires a `RateLimiter.RateLimiter` to be provided alongside
+`FetchHttpClient.layer` — use the exported `RateLimiterLive` layer from
+`gen/client/RateLimiting.ts`:
+
+```ts
+const serviceEffect = makeApiService(makeApiConfig()).pipe(
+  Effect.provide(FetchHttpClient.layer),
+  Effect.provide(RateLimiterLive),
+);
+```
+
+This wraps every call through `HttpClient.withRateLimiter`, backed by an
+in-memory `RateLimiterStore` with adaptive 429/`Retry-After` feedback
+(effect `4.0.0-beta.88`). Tune pacing via `ApiConfig.rateLimit`.
+
 ## Testing
 
 The default test lane is local and deterministic.

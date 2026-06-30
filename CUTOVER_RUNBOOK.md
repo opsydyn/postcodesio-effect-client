@@ -238,6 +238,16 @@ The current working flow is:
 
 Do not skip the bundling step if you want the usable full artifact.
 
+### Rate limiter dependency
+
+`makeApiService` requires a `RateLimiter.RateLimiter` service in scope —
+provide `RateLimiterLive` from `gen/client/RateLimiting.ts` alongside
+`FetchHttpClient.layer` wherever `makeApiService` is called (see
+`test/contract.test.ts` and `gen/programs/*.ts` for the pattern). A freshly
+extracted or cloned copy that runs the example programs or contract test
+without this layer provided will fail to compile (`Type 'RateLimiter' is
+not assignable to type 'never'`), not just fail at runtime.
+
 ### Parent-repo focus
 
 After cleanup, the parent repo should remain the handwritten production client only. Do not migrate spike-only generator scripts or docs back into root-level parent workflows.
