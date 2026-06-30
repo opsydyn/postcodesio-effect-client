@@ -163,7 +163,8 @@ components:
         latitude: { type: number }
         european_electoral_region: { type: string }
         primary_care_trust: { type: string }
-        region: { type: string }
+        region:
+          type: [string, 'null']
         lsoa: { type: string }
         msoa: { type: string }
         parish:

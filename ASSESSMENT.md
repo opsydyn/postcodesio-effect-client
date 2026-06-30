@@ -344,3 +344,26 @@ Bumped `effect`, `@effect/platform-node`, and `@effect/openapi-generator` from
   instead of 404ing); fixed with `encodeURIComponent` on path segments
 - simplified `Errors.ts`'s two `_tag` duck-typing checks to use the existing
   `effect/Predicate` `isTagged` guard
+
+## Update: 2026-06-30 — live-tested narrowed spec gap: nullable `region`
+
+Live-tested the `src/server/` demo against the real postcodes.io API via its
+Scalar docs UI. Looking up a Scottish postcode (`EH25 9NJ`) failed with
+`SchemaError: Expected string, got null at ["result"]["region"]` — a real
+`postcodes.io` response, not a malformed request.
+
+This is not a transcription error against postcodes.io's own spec: their
+published OpenAPI document declares `region: { type: string }` too (see
+`openapi/full-upstream/components/schemas/Postcode.yaml`), with no
+`nullable: true`. "Region" appears to be an England-specific NHS
+administrative concept; postcodes.io's own documentation doesn't capture that
+it returns `null` for Scottish (and likely Welsh/Northern Irish) postcodes.
+
+Fixed in our narrowed spec: `openapi/spec.yaml`'s `PostcodeResult.region` is
+now `type: [string, 'null']`, matching the pattern already used for
+`parish`/`admin_county`/`ced`. Regenerated, added a regression test
+(`test/contract.test.ts`: "decodes a null region for Scottish postcodes",
+backed by a mock fixture in `test/helpers/fixtures.ts`), and verified against
+the live API. Not fixed upstream — `openapi/full-upstream/` mirrors
+postcodes.io's actual published spec, so changing it there would
+misrepresent what they publish, even though it's also wrong in practice.

@@ -45,6 +45,21 @@ export const lookupPostcodeResponse = {
 	result: postcodeResult,
 } satisfies PostcodesSpike.LookupPostcode200;
 
+// Scottish postcodes can return a null region — postcodes.io's own published
+// spec declares it non-nullable, but live responses for e.g. EH25 9NJ violate
+// that. See ASSESSMENT.md.
+export const scottishPostcodeResult = {
+	...postcodeResult,
+	postcode: "EH25 9NJ",
+	country: "Scotland",
+	region: null,
+} satisfies PostcodesSpike.LookupPostcode200["result"];
+
+export const lookupScottishPostcodeResponse = {
+	status: 200,
+	result: scottishPostcodeResult,
+} satisfies PostcodesSpike.LookupPostcode200;
+
 export const bulkLookupPostcodesResponse = {
 	status: 200,
 	result: [

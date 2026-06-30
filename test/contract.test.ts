@@ -85,4 +85,17 @@ describe("openapi-effect spike contract", () => {
 		expect(notFound).toBeDefined();
 		expect(notFound?.resource).toBe("outcode");
 	});
+
+	test("decodes a null region for Scottish postcodes", async () => {
+		const serviceEffect = makeApiService(makeApiConfig({ baseUrl })).pipe(
+			Effect.provide(FetchHttpClient.layer),
+			Effect.provide(RateLimiterLive),
+		);
+
+		const service = await Effect.runPromise(serviceEffect);
+
+		const postcode = await Effect.runPromise(service.lookupPostcode("EH259NJ"));
+		expect(postcode.postcode).toBe("EH25 9NJ");
+		expect(postcode.region).toBeNull();
+	});
 });
