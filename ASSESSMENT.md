@@ -367,3 +367,29 @@ backed by a mock fixture in `test/helpers/fixtures.ts`), and verified against
 the live API. Not fixed upstream — `openapi/full-upstream/` mirrors
 postcodes.io's actual published spec, so changing it there would
 misrepresent what they publish, even though it's also wrong in practice.
+
+## Update: 2026-06-30 — synced vendored full upstream spec
+
+`openapi/full-upstream/` was badly stale: postcodes.io's own `info.version`
+jumped `3.5.1` → `18.0.0` on re-pull (`bun run generate:full`). Notable
+changes that flowed into `generated/PostcodesFull.ts`:
+
+- `Postcode.yaml` gained new fields (`date_of_termination`,
+  `index_of_multiple_deprivation`, `senedd_constituency`,
+  `senedd_constituency_no`) and promoted ~17 previously-optional fields
+  (`pfa`, `nhs_region`, `ttwa`, `lep1`/`lep2`, etc.) to `required`
+- confirmed the `region: string` non-nullable gap from the entry above is
+  still present in postcodes.io's published spec at v18.0.0 — not something
+  they've since fixed upstream
+- `TerminatedPostcode.yaml`'s `eastings`/`northings`/`longitude`/`latitude`
+  are now correctly nullable
+- `ScottishPostcodeResponse.yaml` and `TerminatedPostcodeResponse.yaml`: a
+  real shape correction — `result` was documented as an array, is now
+  correctly a single object
+- `ScottishPostcodes.yaml` went from a 27-line stub to a fully-documented
+  Scottish Postcode Directory model (~50 fields)
+
+Regenerated `generated/PostcodesFull.ts` against the refreshed bundle: clean
+`tsc --noEmit`, all tests still pass. None of this touches the narrowed
+spec/client — `src/client/`, `src/server/` only use the four narrowed
+operations, not the full client's extra surface.

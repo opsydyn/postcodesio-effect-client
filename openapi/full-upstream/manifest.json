@@ -54,7 +54,7 @@
     {
       "relativePath": "components/responses/ScottishPostcodeResponse.yaml",
       "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/components/responses/ScottishPostcodeResponse.yaml",
-      "bytes": 290,
+      "bytes": 301,
       "localRefs": [
         "../schemas/ScottishPostcodes.yaml"
       ]
@@ -62,7 +62,7 @@
     {
       "relativePath": "components/responses/TerminatedPostcodeResponse.yaml",
       "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/components/responses/TerminatedPostcodeResponse.yaml",
-      "bytes": 292,
+      "bytes": 281,
       "localRefs": [
         "../schemas/TerminatedPostcode.yaml"
       ]
@@ -78,7 +78,7 @@
     {
       "relativePath": "components/schemas/Outcode.yaml",
       "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/components/schemas/Outcode.yaml",
-      "bytes": 2087,
+      "bytes": 2425,
       "localRefs": []
     },
     {
@@ -90,19 +90,19 @@
     {
       "relativePath": "components/schemas/Postcode.yaml",
       "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/components/schemas/Postcode.yaml",
-      "bytes": 16521,
+      "bytes": 18971,
       "localRefs": []
     },
     {
       "relativePath": "components/schemas/ScottishPostcodes.yaml",
       "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/components/schemas/ScottishPostcodes.yaml",
-      "bytes": 995,
+      "bytes": 21921,
       "localRefs": []
     },
     {
       "relativePath": "components/schemas/TerminatedPostcode.yaml",
       "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/components/schemas/TerminatedPostcode.yaml",
-      "bytes": 1266,
+      "bytes": 2020,
       "localRefs": []
     },
     {
@@ -138,25 +138,25 @@
     {
       "relativePath": "md/postcode.md",
       "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/md/postcode.md",
-      "bytes": 121,
+      "bytes": 706,
       "localRefs": []
     },
     {
       "relativePath": "md/scottish-postcodes.md",
       "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/md/scottish-postcodes.md",
-      "bytes": 393,
+      "bytes": 969,
       "localRefs": []
     },
     {
       "relativePath": "md/terminated-postcodes.md",
       "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/md/terminated-postcodes.md",
-      "bytes": 297,
+      "bytes": 547,
       "localRefs": []
     },
     {
       "relativePath": "openapi.yaml",
       "sourceUrl": "https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/openapi.yaml",
-      "bytes": 1555,
+      "bytes": 1556,
       "localRefs": [
         "./description.md",
         "paths/outcodes@{outcode}.yaml",
