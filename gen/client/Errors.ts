@@ -1,4 +1,5 @@
 import * as Data from "effect/Data";
+import * as Predicate from "effect/Predicate";
 import type { SchemaError } from "effect/Schema";
 import type * as HttpClientError from "effect/unstable/http/HttpClientError";
 import type * as RateLimiter from "effect/unstable/persistence/RateLimiter";
@@ -42,17 +43,11 @@ export type ApiServiceError =
 	| RateLimiter.RateLimiterError;
 
 export const isApiNotFoundError = (input: unknown): input is ApiNotFoundError =>
-	typeof input === "object" &&
-	input !== null &&
-	"_tag" in input &&
-	input._tag === "ApiNotFoundError";
+	Predicate.isTagged(input, "ApiNotFoundError");
 
 export const isGeneratedNotFoundError = (
 	input: unknown,
 ): input is GeneratedNotFoundError =>
-	typeof input === "object" &&
-	input !== null &&
-	"_tag" in input &&
-	(input._tag === "LookupPostcode404" ||
-		input._tag === "FindOutcode404" ||
-		input._tag === "FindPlace404");
+	Predicate.isTagged(input, "LookupPostcode404") ||
+	Predicate.isTagged(input, "FindOutcode404") ||
+	Predicate.isTagged(input, "FindPlace404");
