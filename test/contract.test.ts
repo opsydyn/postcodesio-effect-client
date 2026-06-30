@@ -4,6 +4,7 @@ import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient";
 import { makeApiConfig } from "../gen/client/ApiConfig.ts";
 import { makeApiService } from "../gen/client/ApiService.ts";
 import { isApiNotFoundError } from "../gen/client/Errors.ts";
+import { RateLimiterLive } from "../gen/client/RateLimiting.ts";
 import {
 	getSpikeMockServerBaseUrl,
 	startSpikeMockServer,
@@ -26,6 +27,7 @@ describe("openapi-effect spike contract", () => {
 	test("wraps generated GET, POST, and 404 error flows", async () => {
 		const serviceEffect = makeApiService(makeApiConfig({ baseUrl })).pipe(
 			Effect.provide(FetchHttpClient.layer),
+			Effect.provide(RateLimiterLive),
 		);
 
 		const service = await Effect.runPromise(serviceEffect);
@@ -56,5 +58,31 @@ describe("openapi-effect spike contract", () => {
 		expect(notFound).toBeDefined();
 		expect(notFound?.resource).toBe("postcode");
 		expect(notFound?.cause.status).toBe(404);
+	});
+
+	test("rejects path-segment escape attempts in outcode lookups", async () => {
+		const serviceEffect = makeApiService(makeApiConfig({ baseUrl })).pipe(
+			Effect.provide(FetchHttpClient.layer),
+			Effect.provide(RateLimiterLive),
+		);
+
+		const service = await Effect.runPromise(serviceEffect);
+
+		const failure = await Effect.runPromise(
+			service.findOutcode("../places/osgb4000000074564391").pipe(
+				Effect.match({
+					onFailure: (error) => error,
+					onSuccess: () => undefined,
+				}),
+			),
+		);
+
+		const notFound = Match.value(failure).pipe(
+			Match.when(isApiNotFoundError, (error) => error),
+			Match.orElse(() => undefined),
+		);
+
+		expect(notFound).toBeDefined();
+		expect(notFound?.resource).toBe("outcode");
 	});
 });

@@ -1,6 +1,7 @@
 import { Effect, Match } from "effect";
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as HttpClientRequest from "effect/unstable/http/HttpClientRequest";
+import * as RateLimiter from "effect/unstable/persistence/RateLimiter";
 import * as Generated from "../generated/PostcodesSpike.ts";
 import type { ApiConfig } from "./ApiConfig.ts";
 import {
@@ -8,6 +9,7 @@ import {
 	type ApiServiceError,
 	isGeneratedNotFoundError,
 } from "./Errors.ts";
+import { defaultRateLimit } from "./RateLimiting.ts";
 
 const configureHttpClient = (
 	client: HttpClient.HttpClient,
@@ -48,6 +50,8 @@ const mapGeneratedError =
 			Match.orElse((other) => other as ApiServiceError),
 		);
 
+const encodePathSegment = (value: string): string => encodeURIComponent(value);
+
 export function makeApiServiceFromClient(
 	client: HttpClient.HttpClient,
 	config: ApiConfig,
@@ -56,7 +60,7 @@ export function makeApiServiceFromClient(
 
 	return {
 		lookupPostcode: (postcode: string) =>
-			generated.lookupPostcode(postcode, undefined).pipe(
+			generated.lookupPostcode(encodePathSegment(postcode), undefined).pipe(
 				Effect.map((response) => response.result),
 				Effect.mapError(mapGeneratedError("postcode", postcode)),
 			),
@@ -66,12 +70,12 @@ export function makeApiServiceFromClient(
 				Effect.mapError((error) => error as ApiServiceError),
 			),
 		findOutcode: (outcode: string) =>
-			generated.findOutcode(outcode, undefined).pipe(
+			generated.findOutcode(encodePathSegment(outcode), undefined).pipe(
 				Effect.map((response) => response.result),
 				Effect.mapError(mapGeneratedError("outcode", outcode)),
 			),
 		findPlace: (code: string) =>
-			generated.findPlace(code, undefined).pipe(
+			generated.findPlace(encodePathSegment(code), undefined).pipe(
 				Effect.map((response) => response.result),
 				Effect.mapError(mapGeneratedError("place", code)),
 			),
@@ -82,6 +86,22 @@ export type ApiService = ReturnType<typeof makeApiServiceFromClient>;
 
 export const makeApiService = Effect.fnUntraced(function* (config: ApiConfig) {
 	const client = yield* HttpClient.HttpClient;
+	const limiter = yield* RateLimiter.RateLimiter;
 
-	return makeApiServiceFromClient(client, config);
+	const rateLimitedClient = client.pipe(
+		HttpClient.withRateLimiter({
+			limiter,
+			key: config.baseUrl,
+			window: config.rateLimit?.window ?? defaultRateLimit.window,
+			limit: config.rateLimit?.limit ?? defaultRateLimit.limit,
+		}),
+	);
+
+	// Generated.make only types its client param as plain HttpClientError; the
+	// RateLimiterError this adds still flows through at runtime and is folded
+	// back into ApiServiceError by mapGeneratedError below.
+	return makeApiServiceFromClient(
+		rateLimitedClient as HttpClient.HttpClient,
+		config,
+	);
 });
