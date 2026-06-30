@@ -1,10 +1,10 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { Effect, Match } from "effect";
 import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient";
-import { makeApiConfig } from "../gen/client/ApiConfig.ts";
-import { makeApiService } from "../gen/client/ApiService.ts";
-import { isApiNotFoundError } from "../gen/client/Errors.ts";
-import { RateLimiterLive } from "../gen/client/RateLimiting.ts";
+import { makeApiConfig } from "../src/client/ApiConfig.ts";
+import { makeApiService } from "../src/client/ApiService.ts";
+import { isApiNotFoundError } from "../src/client/Errors.ts";
+import { RateLimiterLive } from "../src/client/RateLimiting.ts";
 import {
 	getSpikeMockServerBaseUrl,
 	startSpikeMockServer,

@@ -3,7 +3,7 @@ import * as Predicate from "effect/Predicate";
 import type { SchemaError } from "effect/Schema";
 import type * as HttpClientError from "effect/unstable/http/HttpClientError";
 import type * as RateLimiter from "effect/unstable/persistence/RateLimiter";
-import type * as Generated from "../generated/PostcodesSpike.ts";
+import type * as Generated from "../../generated/PostcodesSpike.ts";
 
 export interface ApiNotFoundError {
 	readonly _tag: "ApiNotFoundError";

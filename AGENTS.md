@@ -22,9 +22,10 @@ DDD-oriented client with stricter domain and schema-boundary rules.
 
 - `openapi/` — narrowed spec plus vendored full upstream inputs
 - `scripts/` — helpers for pulling and bundling the full upstream spec
-- `gen/generated/` — raw generated client artifacts
-- `gen/client/` — handwritten wrapper layer over generated code
-- `gen/programs/` — runnable examples and smoke programs
+- `generated/` — raw generated client artifacts (the only machine-generated tree)
+- `src/client/` — handwritten wrapper layer over generated code
+- `src/programs/` — runnable examples and smoke programs
+- `src/server/` — native `HttpApi` definition + server, generating OpenAPI docs from code
 - `test/` — Elysia-backed contract tests and helpers
 
 ## What this repo is for
@@ -40,9 +41,9 @@ Keep work here focused on answering questions like:
 ## Non-negotiables
 
 - **This is a spike, not the production library** — do not present this repo as the default client for consumers.
-- **Generated code is replaceable** — treat files under `gen/generated/` as generated artifacts, not hand-maintained source.
+- **Generated code is replaceable** — treat files under `generated/` as generated artifacts, not hand-maintained source.
 - **Do not hand-edit generated output as the default fix** — prefer changing the spec input, generation command, wrapper layer, or bundling script. If generator output itself is the subject of investigation, document the finding in `ASSESSMENT.md`.
-- **The wrapper layer is the main handwritten seam** — base URL injection, auth, ergonomic error mapping, and response shaping belong in `gen/client/`, not in generated files.
+- **The wrapper layer is the main handwritten seam** — base URL injection, auth, ergonomic error mapping, and response shaping belong in `src/client/`, not in generated files.
 - **Keep the fast test lane local** — default tests should stay deterministic and use the local Elysia mock server, not live `postcodes.io` HTTP.
 - **Bundle the full upstream spec before full generation** — in this repo, generating directly from the raw multi-file upstream entrypoint is a known dead end. The supported path is `pull:full-spec` -> `bundle:full-spec` -> `generate:full`.
 - **Keep generated-code noise isolated** — if linting rules and generator output disagree, prefer a narrowly scoped generated-file exemption over rewriting emitted code just to appease lint.
@@ -56,9 +57,9 @@ When changing the small self-contained assessment slice:
 
 1. Update `openapi/spec.yaml`
 2. Regenerate with `bun run generate`
-3. Adjust the handwritten wrapper in `gen/client/` if needed
+3. Adjust the handwritten wrapper in `src/client/` if needed
 4. Update or add tests in `test/`
-5. Update example programs in `gen/programs/` if relevant
+5. Update example programs in `src/programs/` if relevant
 6. Update `README.md` or `ASSESSMENT.md` if the findings changed
 
 ### Full upstream workflow

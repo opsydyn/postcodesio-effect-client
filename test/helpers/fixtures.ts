@@ -1,5 +1,5 @@
-import type * as PostcodesFull from "../../gen/generated/PostcodesFull.ts";
-import type * as PostcodesSpike from "../../gen/generated/PostcodesSpike.ts";
+import type * as PostcodesFull from "../../generated/PostcodesFull.ts";
+import type * as PostcodesSpike from "../../generated/PostcodesSpike.ts";
 
 export const postcodeResult = {
 	postcode: "SW1A 1AA",

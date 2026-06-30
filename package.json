@@ -5,18 +5,18 @@
 	"description": "Assessment and experimentation repo for @effect/openapi-generator against postcodes.io, including narrowed and full-spec workflows.",
 	"type": "module",
 	"scripts": {
-		"generate": "openapigen --spec openapi/spec.yaml --name PostcodesSpike --format httpclient > gen/generated/PostcodesSpike.ts",
+		"generate": "openapigen --spec openapi/spec.yaml --name PostcodesSpike --format httpclient > generated/PostcodesSpike.ts",
 		"pull:full-spec": "bun run scripts/pullFullSpec.ts",
 		"bundle:full-spec": "bun run pull:full-spec && bun run scripts/bundleFullSpec.ts",
-		"generate:full": "bun run bundle:full-spec && openapigen --spec openapi/full-upstream/openapi.bundle.yaml --name PostcodesFull --format httpclient > gen/generated/PostcodesFull.ts",
+		"generate:full": "bun run bundle:full-spec && openapigen --spec openapi/full-upstream/openapi.bundle.yaml --name PostcodesFull --format httpclient > generated/PostcodesFull.ts",
 		"typecheck": "tsc --noEmit",
 		"test": "bun test",
 		"check": "bun run typecheck && bun test",
-		"example:get": "bun run gen/programs/getThing.ts",
-		"example:create": "bun run gen/programs/createThing.ts",
-		"example:fail": "bun run gen/programs/failureThing.ts",
-		"example:full": "bun run gen/programs/fullClient.ts",
-		"docs:serve": "bun run gen/server/serve.ts"
+		"example:get": "bun run src/programs/getThing.ts",
+		"example:create": "bun run src/programs/createThing.ts",
+		"example:fail": "bun run src/programs/failureThing.ts",
+		"example:full": "bun run src/programs/fullClient.ts",
+		"docs:serve": "bun run src/server/serve.ts"
 	},
 	"dependencies": {
 		"effect": "4.0.0-beta.92",

@@ -4,7 +4,7 @@ import { TestClock } from "effect/testing";
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as HttpClientResponse from "effect/unstable/http/HttpClientResponse";
 import * as RateLimiter from "effect/unstable/persistence/RateLimiter";
-import { RateLimiterLive } from "../gen/client/RateLimiting.ts";
+import { RateLimiterLive } from "../src/client/RateLimiting.ts";
 
 describe("RateLimiterLive", () => {
 	test("delays requests beyond the configured limit", async () => {

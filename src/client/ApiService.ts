@@ -2,7 +2,7 @@ import { Effect, Match } from "effect";
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as HttpClientRequest from "effect/unstable/http/HttpClientRequest";
 import * as RateLimiter from "effect/unstable/persistence/RateLimiter";
-import * as Generated from "../generated/PostcodesSpike.ts";
+import * as Generated from "../../generated/PostcodesSpike.ts";
 import type { ApiConfig } from "./ApiConfig.ts";
 import {
 	ApiNotFoundError,

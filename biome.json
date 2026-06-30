@@ -66,12 +66,12 @@
 	},
 	"overrides": [
 		{
-			"includes": ["gen/generated/**"],
+			"includes": ["generated/**", "openapi/full-upstream/**"],
 			"linter": { "enabled": false },
 			"formatter": { "enabled": false }
 		},
 		{
-			"includes": ["**", "!gen/programs/**", "!test/helpers/**"],
+			"includes": ["**", "!src/programs/**", "!test/helpers/**"],
 			"plugins": [
 				"./node_modules/@catenarycloud/linteffect/rules/no-naked-object-state-update.grit"
 			]

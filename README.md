@@ -36,10 +36,10 @@ library does not have to.
 
 - `openapi/` — narrowed spec plus vendored full upstream spec inputs
 - `scripts/` — fetch and bundle helpers for the full upstream workflow
-- `gen/generated/` — raw generated client artifacts
-- `gen/client/` — handwritten wrapper layer over generated code
-- `gen/programs/` — runnable examples and tiny smoke programs
-- `gen/server/` — native `HttpApi` definition + server, generating OpenAPI
+- `generated/` — raw generated client artifacts
+- `src/client/` — handwritten wrapper layer over generated code
+- `src/programs/` — runnable examples and tiny smoke programs
+- `src/server/` — native `HttpApi` definition + server, generating OpenAPI
   docs from code instead of consuming an upstream spec
 - `test/` — Elysia-backed contract tests and local helpers
 
@@ -55,16 +55,16 @@ Concretely:
 - `bun run generate:full` runs `openapigen` against
   `openapi/full-upstream/openapi.bundle.yaml`
 - those commands write committed generated artifacts to:
-  - `gen/generated/PostcodesSpike.ts`
-  - `gen/generated/PostcodesFull.ts`
+  - `generated/PostcodesSpike.ts`
+  - `generated/PostcodesFull.ts`
 
 After generation, the rest of the repo imports the generated files rather than
 `@effect/openapi-generator` itself:
 
-- `gen/client/ApiService.ts` wraps `PostcodesSpike.ts`
+- `src/client/ApiService.ts` wraps `PostcodesSpike.ts`
 - `test/contract.test.ts` exercises the handwritten wrapper over
   `PostcodesSpike.ts`
-- `test/fullClient.elysia.test.ts` and `gen/programs/fullClient.ts` use
+- `test/fullClient.elysia.test.ts` and `src/programs/fullClient.ts` use
   `PostcodesFull.ts`
 
 So if you grep for `@effect/openapi-generator` in handwritten runtime code, you
@@ -110,7 +110,7 @@ This writes:
 - vendored upstream spec tree under `openapi/full-upstream/`
 - fetch manifest under `openapi/full-upstream/manifest.json`
 - bundled single-file spec at `openapi/full-upstream/openapi.bundle.yaml`
-- full generated client artifact at `gen/generated/PostcodesFull.ts`
+- full generated client artifact at `generated/PostcodesFull.ts`
 
 Important current finding:
 
@@ -125,7 +125,7 @@ Important current finding:
 
 `makeApiService` requires a `RateLimiter.RateLimiter` to be provided alongside
 `FetchHttpClient.layer` — use the exported `RateLimiterLive` layer from
-`gen/client/RateLimiting.ts`:
+`src/client/RateLimiting.ts`:
 
 ```ts
 const serviceEffect = makeApiService(makeApiConfig()).pipe(
@@ -140,9 +140,9 @@ in-memory `RateLimiterStore` with adaptive 429/`Retry-After` feedback
 
 ## Native OpenAPI docs
 
-`gen/server/` defines a small `HttpApi` (`effect/unstable/httpapi`) mirroring
+`src/server/` defines a small `HttpApi` (`effect/unstable/httpapi`) mirroring
 the narrowed-spec endpoints, reusing the same `Schema`s already generated into
-`gen/generated/PostcodesSpike.ts`. Its handlers proxy real requests to
+`generated/PostcodesSpike.ts`. Its handlers proxy real requests to
 postcodes.io through the existing `ApiService` wrapper. Run:
 
 ```bash
