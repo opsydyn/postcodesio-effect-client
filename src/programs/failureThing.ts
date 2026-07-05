@@ -1,26 +1,12 @@
 import { Effect } from "effect";
-import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient";
-import { makeApiConfig } from "../ApiConfig.ts";
-import { isApiNotFoundError } from "../Errors.ts";
-import { makeApiService } from "../internal/ApiService.ts";
-import { RateLimiterLive } from "../internal/RateLimiting.ts";
+import { isApiNotFoundError, makeApiConfig, PostcodesClient } from "../index.ts";
 
-const serviceEffect = makeApiService(makeApiConfig()).pipe(
-	Effect.provide(FetchHttpClient.layer),
-	Effect.provide(RateLimiterLive),
-);
-
-const service = await Effect.runPromise(serviceEffect);
-
+const client = await Effect.runPromise(PostcodesClient.make(makeApiConfig()));
 const outcome = await Effect.runPromise(
-	service.lookupPostcode("ZZ99ZZ").pipe(
-		Effect.match({
-			onFailure: (error) => error,
-			onSuccess: (result) => result,
-		}),
+	client.lookupPostcode("ZZ99ZZ").pipe(
+		Effect.match({ onFailure: (e) => e, onSuccess: (r) => r }),
 	),
 );
-
 if (isApiNotFoundError(outcome)) {
 	console.log(JSON.stringify(outcome, null, 2));
 } else {

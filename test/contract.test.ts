@@ -1,10 +1,7 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
-import { Effect, Match } from "effect";
+import { Effect, Layer, Match } from "effect";
 import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient";
-import { makeApiConfig } from "../src/ApiConfig.ts";
-import { isApiNotFoundError } from "../src/Errors.ts";
-import { makeApiService } from "../src/internal/ApiService.ts";
-import { RateLimiterLive } from "../src/internal/RateLimiting.ts";
+import { isApiNotFoundError, PostcodesClient } from "../src/index.ts";
 import {
 	getSpikeMockServerBaseUrl,
 	startSpikeMockServer,
@@ -23,79 +20,80 @@ afterAll(() => {
 	stopSpikeMockServer(server);
 });
 
-describe("openapi-effect spike contract", () => {
-	test("wraps generated GET, POST, and 404 error flows", async () => {
-		const serviceEffect = makeApiService(makeApiConfig({ baseUrl })).pipe(
-			Effect.provide(FetchHttpClient.layer),
-			Effect.provide(RateLimiterLive),
-		);
+const clientLayer = (url: string) =>
+	PostcodesClient.layer({ baseUrl: url }).pipe(
+		Layer.provide(FetchHttpClient.layer),
+	);
 
-		const service = await Effect.runPromise(serviceEffect);
+describe("@effect-postcodes/client contract", () => {
+	test("lookupPostcode, bulkLookupPostcodes, and 404 error flow", () =>
+		Effect.runPromise(
+			Effect.gen(function* () {
+				const { lookupPostcode, bulkLookupPostcodes } = yield* PostcodesClient;
 
-		const postcode = await Effect.runPromise(service.lookupPostcode("SW1A1AA"));
-		expect(postcode.postcode).toBe("SW1A 1AA");
+				const postcode = yield* lookupPostcode("SW1A1AA");
+				expect(postcode.postcode).toBe("SW1A 1AA");
 
-		const bulk = await Effect.runPromise(
-			service.bulkLookupPostcodes(["SW1A1AA", "ZZ99ZZ"]),
-		);
-		expect(bulk).toHaveLength(2);
-		expect(bulk[1]?.result).toBeNull();
+				const bulk = yield* bulkLookupPostcodes(["SW1A1AA", "ZZ99ZZ"]);
+				expect(bulk).toHaveLength(2);
+				expect(bulk[1]?.result).toBeNull();
 
-		const failure = await Effect.runPromise(
-			service.lookupPostcode("ZZ99ZZ").pipe(
-				Effect.match({
-					onFailure: (error) => error,
-					onSuccess: () => undefined,
-				}),
+				const failure = yield* lookupPostcode("ZZ99ZZ").pipe(
+					Effect.match({ onFailure: (e) => e, onSuccess: () => undefined }),
+				);
+				const notFound = Match.value(failure).pipe(
+					Match.when(isApiNotFoundError, (e) => e),
+					Match.orElse(() => undefined),
+				);
+				expect(notFound).toBeDefined();
+				expect(notFound?.resource).toBe("postcode");
+				expect(notFound?.cause.status).toBe(404);
+			}).pipe(Effect.provide(clientLayer(baseUrl))),
+		));
+
+	test("rejects path-segment escape attempts in outcode lookups", () =>
+		Effect.runPromise(
+			Effect.gen(function* () {
+				const { findOutcode } = yield* PostcodesClient;
+				const failure = yield* findOutcode("../places/osgb4000000074564391").pipe(
+					Effect.match({ onFailure: (e) => e, onSuccess: () => undefined }),
+				);
+				const notFound = Match.value(failure).pipe(
+					Match.when(isApiNotFoundError, (e) => e),
+					Match.orElse(() => undefined),
+				);
+				expect(notFound).toBeDefined();
+				expect(notFound?.resource).toBe("outcode");
+			}).pipe(Effect.provide(clientLayer(baseUrl))),
+		));
+
+	test("decodes a null region for Scottish postcodes", () =>
+		Effect.runPromise(
+			Effect.gen(function* () {
+				const { lookupPostcode } = yield* PostcodesClient;
+				const postcode = yield* lookupPostcode("EH259NJ");
+				expect(postcode.postcode).toBe("EH25 9NJ");
+				expect(postcode.region).toBeNull();
+			}).pipe(Effect.provide(clientLayer(baseUrl))),
+		));
+
+	test("PostcodesClient is mockable via Layer.succeed", () =>
+		Effect.runPromise(
+			Effect.gen(function* () {
+				const { lookupPostcode } = yield* PostcodesClient;
+				const result = yield* lookupPostcode("anything");
+				expect(result.postcode).toBe("MOCK 1AA");
+			}).pipe(
+				Effect.provide(
+					Layer.succeed(PostcodesClient, {
+						lookupPostcode: (_: string) =>
+							Effect.succeed({ postcode: "MOCK 1AA" } as any),
+						bulkLookupPostcodes: (_: readonly string[]) =>
+							Effect.succeed([]),
+						findOutcode: (_: string) => Effect.die("not called"),
+						findPlace: (_: string) => Effect.die("not called"),
+					}),
+				),
 			),
-		);
-
-		const notFound = Match.value(failure).pipe(
-			Match.when(isApiNotFoundError, (error) => error),
-			Match.orElse(() => undefined),
-		);
-
-		expect(notFound).toBeDefined();
-		expect(notFound?.resource).toBe("postcode");
-		expect(notFound?.cause.status).toBe(404);
-	});
-
-	test("rejects path-segment escape attempts in outcode lookups", async () => {
-		const serviceEffect = makeApiService(makeApiConfig({ baseUrl })).pipe(
-			Effect.provide(FetchHttpClient.layer),
-			Effect.provide(RateLimiterLive),
-		);
-
-		const service = await Effect.runPromise(serviceEffect);
-
-		const failure = await Effect.runPromise(
-			service.findOutcode("../places/osgb4000000074564391").pipe(
-				Effect.match({
-					onFailure: (error) => error,
-					onSuccess: () => undefined,
-				}),
-			),
-		);
-
-		const notFound = Match.value(failure).pipe(
-			Match.when(isApiNotFoundError, (error) => error),
-			Match.orElse(() => undefined),
-		);
-
-		expect(notFound).toBeDefined();
-		expect(notFound?.resource).toBe("outcode");
-	});
-
-	test("decodes a null region for Scottish postcodes", async () => {
-		const serviceEffect = makeApiService(makeApiConfig({ baseUrl })).pipe(
-			Effect.provide(FetchHttpClient.layer),
-			Effect.provide(RateLimiterLive),
-		);
-
-		const service = await Effect.runPromise(serviceEffect);
-
-		const postcode = await Effect.runPromise(service.lookupPostcode("EH259NJ"));
-		expect(postcode.postcode).toBe("EH25 9NJ");
-		expect(postcode.region).toBeNull();
-	});
+		));
 });
