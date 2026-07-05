@@ -1,0 +1,9 @@
+{
+	"entryPoints": ["src/index.ts"],
+	"out": "docs/api",
+	"name": "@effect-postcodes/client",
+	"includeVersion": true,
+	"readme": "README.md",
+	"excludeInternal": true,
+	"plugin": []
+}

@@ -1,37 +1,72 @@
 {
-	"name": "effect-postcodes-openapi-spike",
-	"private": true,
-	"version": "0.0.0",
-	"description": "Assessment and experimentation repo for @effect/openapi-generator against postcodes.io, including narrowed and full-spec workflows.",
+	"name": "@effect-postcodes/client",
+	"version": "0.1.0",
+	"description": "Effect-native TypeScript client for the postcodes.io API",
+	"author": "Alan Currie",
+	"license": "MIT",
 	"type": "module",
+	"sideEffects": false,
+	"main": "./dist/index.mjs",
+	"exports": {
+		".": {
+			"import": {
+				"types": "./dist/index.d.mts",
+				"default": "./dist/index.mjs"
+			}
+		},
+		"./package.json": "./package.json"
+	},
+	"files": ["dist", "README.md", "LICENSE", "CHANGELOG.md"],
 	"scripts": {
+		"build": "tsdown",
+		"dev": "tsdown --watch",
 		"generate": "openapigen --spec openapi/spec.yaml --name PostcodesSpike --format httpclient > generated/PostcodesSpike.ts",
 		"pull:full-spec": "bun run scripts/pullFullSpec.ts",
 		"bundle:full-spec": "bun run pull:full-spec && bun run scripts/bundleFullSpec.ts",
 		"generate:full": "bun run bundle:full-spec && openapigen --spec openapi/full-upstream/openapi.bundle.yaml --name PostcodesFull --format httpclient > generated/PostcodesFull.ts",
 		"typecheck": "tsc --noEmit",
-		"test": "bun test",
-		"check": "bun run typecheck && bun test",
+		"test": "bun test test/contract.test.ts test/fullClient.elysia.test.ts test/rateLimiting.test.ts",
+		"check": "bun run typecheck && bun run test",
+		"docs:api": "typedoc",
+		"docs:api:check": "typedoc --emit none",
+		"lint": "publint && attw --pack . --ignore-rules cjs-resolves-to-esm no-resolution",
 		"example:get": "bun run src/programs/getThing.ts",
 		"example:create": "bun run src/programs/createThing.ts",
 		"example:fail": "bun run src/programs/failureThing.ts",
 		"example:full": "bun run src/programs/fullClient.ts",
-		"docs:serve": "bun run src/server/serve.ts"
+		"docs:serve": "bun run src/server/serve.ts",
+		"changeset": "changeset",
+		"version": "changeset version",
+		"release": "bun run build && changeset publish",
+		"prepublishOnly": "bun run build",
+		"pack:dry-run": "npm pack --dry-run"
 	},
-	"dependencies": {
-		"effect": "4.0.0-beta.92",
-		"@effect/platform-node": "4.0.0-beta.92"
+	"peerDependencies": {
+		"effect": "^4.0.0-beta.90",
+		"@effect/platform-node": "^4.0.0-beta.90"
 	},
 	"devDependencies": {
+		"@arethetypeswrong/cli": "^0.18.3",
 		"@biomejs/biome": "2.4.7",
 		"@catenarycloud/linteffect": "^0.0.4-0",
+		"@changesets/cli": "^2.31.0",
 		"@effect/language-service": "0.80.0",
 		"@effect/openapi-generator": "4.0.0-beta.92",
+		"@effect/platform-node": "4.0.0-beta.92",
 		"@types/node": "24.5.2",
 		"bun-types": "^1.3.11",
+		"effect": "4.0.0-beta.92",
 		"elysia": "^1.3.0",
+		"publint": "^0.3.21",
 		"swagger2openapi": "^7.0.8",
+		"tsdown": "^0.22.1",
+		"typedoc": "^0.28.19",
 		"typescript": "6.0.0-beta",
+		"unrun": "^0.3.1",
 		"yaml": "^2.8.3"
+	},
+	"publishConfig": {
+		"access": "public",
+		"provenance": true
 	}
 }
