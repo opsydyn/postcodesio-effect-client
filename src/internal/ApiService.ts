@@ -3,12 +3,12 @@ import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as HttpClientRequest from "effect/unstable/http/HttpClientRequest";
 import * as RateLimiter from "effect/unstable/persistence/RateLimiter";
 import * as Generated from "../../generated/PostcodesSpike.ts";
-import type { ApiConfig } from "./ApiConfig.ts";
+import type { ApiConfig } from "../ApiConfig.ts";
 import {
 	ApiNotFoundError,
 	type ApiServiceError,
 	isGeneratedNotFoundError,
-} from "./Errors.ts";
+} from "../Errors.ts";
 import { defaultRateLimit } from "./RateLimiting.ts";
 
 const configureHttpClient = (

@@ -4,8 +4,8 @@
 
 **Goal:** Split `gen/` into a top-level `generated/` (true machine output only) and `src/` (all hand-written application code: `client/`, `programs/`, `server/`), so the repo root answers "is this generated?" without opening a folder.
 
-**Architecture:** Pure file move (`git mv`) plus mechanical import-path and config-path updates. No logic changes, no behavior changes.
-
+**Architecture:** Pure file move (`git mv`) plus mechanical import-path and config-path updates. No logic changes, no behavior changes.ą
+ą
 **Tech Stack:** Bun, TypeScript, Biome.
 
 ## Global Constraints

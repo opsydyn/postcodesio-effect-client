@@ -3,7 +3,7 @@ import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient";
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as HttpClientRequest from "effect/unstable/http/HttpClientRequest";
 import * as PostcodesFull from "../../generated/PostcodesFull.ts";
-import { makeApiConfig } from "../client/ApiConfig.ts";
+import { makeApiConfig } from "../ApiConfig.ts";
 
 const configureHttpClient = (
 	client: HttpClient.HttpClient,

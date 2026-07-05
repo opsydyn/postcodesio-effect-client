@@ -4,7 +4,7 @@ import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient";
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as HttpClientRequest from "effect/unstable/http/HttpClientRequest";
 import * as PostcodesFull from "../generated/PostcodesFull.ts";
-import { makeApiConfig } from "../src/client/ApiConfig.ts";
+import { makeApiConfig } from "../src/ApiConfig.ts";
 import {
 	getSpikeMockServerBaseUrl,
 	startSpikeMockServer,
