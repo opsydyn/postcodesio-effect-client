@@ -1,15 +1,21 @@
 ---
-title: Use with Node.js
-description: Swap to Node.js's native HTTP client in a server-side application.
+title: Use with Node.js or Bun
+description: Choose the right HTTP client for Node.js or Bun server-side applications.
 ---
 
-By default, `PostcodesClient.Default` uses `FetchHttpClient` (the browser-compatible
-Fetch API). In a Node.js server you may prefer the platform-native HTTP client.
+`PostcodesClient.Default` uses `FetchHttpClient`, which delegates to the global `fetch`.
 
-## When to use this
+**Running in Bun?** Bun implements `fetch` natively — `.Default` is already using
+Bun's own high-performance HTTP stack. No extra package needed, nothing to configure.
 
-Use `PostcodesClient.layer` — not `.Default` — when you want to supply your own HTTP
-client implementation.
+**Running in Node.js?** Node.js has its own native HTTP client (undici). You may
+prefer it for consistency with other Node.js networking, HTTP/2 support, or tuned
+connection pooling.
+
+## When to swap the HTTP client
+
+Use `PostcodesClient.layer` — not `.Default` — when you want to supply Node.js's
+native client explicitly.
 
 ## Install the optional peer dependency
 
