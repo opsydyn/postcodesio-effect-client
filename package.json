@@ -25,7 +25,7 @@
 		"bundle:full-spec": "bun run pull:full-spec && bun run scripts/bundleFullSpec.ts",
 		"generate:full": "bun run bundle:full-spec && openapigen --spec openapi/full-upstream/openapi.bundle.yaml --name PostcodesFull --format httpclient > generated/PostcodesFull.ts",
 		"typecheck": "tsc --noEmit",
-		"test": "bun test test/contract.test.ts test/fullClient.elysia.test.ts test/rateLimiting.test.ts",
+		"test": "bun test test/contract.test.ts test/fullClient.elysia.test.ts test/rateLimiting.test.ts test/schema.property.test.ts test/client.property.test.ts",
 		"check": "bun run typecheck && bun run test",
 		"docs:api": "typedoc",
 		"docs:api:check": "typedoc --emit none",
