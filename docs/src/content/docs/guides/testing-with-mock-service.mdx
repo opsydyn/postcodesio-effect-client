@@ -3,4 +3,64 @@ title: Testing with a mock service
 description: Write tests without hitting the real postcodes.io API.
 ---
 
-Coming soon.
+Because `PostcodesClient` is a `Context.Service`, you can replace the entire
+implementation with a test double using `Layer.succeed`. No HTTP mocking library
+or network interception needed.
+
+## Basic test double
+
+```typescript
+import { Effect, Layer } from "effect"
+import { PostcodesClient } from "@effect-postcodes/client"
+
+const mockResult = {
+  postcode: "SW1A 1AA",
+  country: "England",
+  region: "London",
+  // fill in the fields your code under test actually reads
+} as any
+
+const MockClient = Layer.succeed(PostcodesClient, {
+  lookupPostcode: (_postcode) => Effect.succeed(mockResult),
+  bulkLookupPostcodes: (_postcodes) => Effect.succeed([]),
+  findOutcode: (_outcode) => Effect.die("not called in this test"),
+  findPlace: (_code) => Effect.die("not called in this test"),
+})
+
+// In your test (example uses bun:test):
+import { expect, test } from "bun:test"
+
+test("looks up a postcode", async () => {
+  const result = await Effect.runPromise(
+    Effect.gen(function*() {
+      const { lookupPostcode } = yield* PostcodesClient
+      return yield* lookupPostcode("SW1A1AA")
+    }).pipe(Effect.provide(MockClient))
+  )
+  expect(result.postcode).toBe("SW1A 1AA")
+})
+```
+
+## Testing 404 paths
+
+```typescript
+import { ApiNotFoundError, isApiNotFoundError } from "@effect-postcodes/client"
+
+const NotFoundClient = Layer.succeed(PostcodesClient, {
+  lookupPostcode: (postcode) =>
+    Effect.fail(new ApiNotFoundError(
+      "postcode",
+      postcode,
+      { status: 404, error: "Postcode not found" }
+    )),
+  bulkLookupPostcodes: (_) => Effect.die("not called"),
+  findOutcode: (_) => Effect.die("not called"),
+  findPlace: (_) => Effect.die("not called"),
+})
+```
+
+## Why `Effect.die` for unused methods
+
+`Effect.die` converts an unexpected call into a defect — a failing test will tell
+you exactly which method was called unexpectedly, rather than silently returning
+an undefined value that masks the problem.

@@ -3,4 +3,41 @@ title: Handle Scottish postcodes
 description: Work safely with postcodes that return null for the region field.
 ---
 
-Coming soon.
+Postcodes in Scotland, Wales, and Northern Ireland may return `region: null`.
+`region` is an England-specific NHS administrative concept; postcodes.io returns
+`null` rather than an empty string for postcodes outside the English regional system.
+
+`PostcodeResult.region` is typed `string | null` — not `string` — so TypeScript will
+remind you to handle both cases.
+
+## Type-safe handling
+
+```typescript
+import { Effect } from "effect"
+import { PostcodesClient } from "@effect-postcodes/client"
+
+const program = Effect.gen(function*() {
+  const { lookupPostcode } = yield* PostcodesClient
+  const result = yield* lookupPostcode("EH25 9NJ") // Midlothian, Scotland
+
+  const regionDisplay = result.region ?? "Not applicable"
+  console.log(`Region: ${regionDisplay}`)
+  // Region: Not applicable
+})
+
+Effect.runPromise(
+  program.pipe(Effect.provide(PostcodesClient.Default))
+)
+```
+
+## Background
+
+This nullability is not documented in postcodes.io's own published OpenAPI spec —
+both their upstream spec and a naively generated client declare `region` as a
+non-nullable `string`. The `@effect-postcodes/client` schema was corrected from
+the upstream spec after live testing revealed the real API behaviour with
+`EH25 9NJ`.
+
+If you hit a `SchemaError` on a field you expect to be non-null, check whether
+the postcode is outside England — the same pattern may apply to other
+geography-specific fields.

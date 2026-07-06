@@ -3,4 +3,53 @@ title: Use with Node.js
 description: Swap to Node.js's native HTTP client in a server-side application.
 ---
 
-Coming soon.
+By default, `PostcodesClient.Default` uses `FetchHttpClient` (the browser-compatible
+Fetch API). In a Node.js server you may prefer the platform-native HTTP client.
+
+## When to use this
+
+Use `PostcodesClient.layer` — not `.Default` — when you want to supply your own HTTP
+client implementation.
+
+## Install the optional peer dependency
+
+```bash
+npm install @effect/platform-node
+```
+
+## Wire it up
+
+```typescript
+import { Effect, Layer } from "effect"
+import { NodeHttpClient } from "@effect/platform-node"
+import { PostcodesClient, makeApiConfig } from "@effect-postcodes/client"
+
+const AppLayer = PostcodesClient.layer(
+  makeApiConfig({ baseUrl: "https://api.postcodes.io" })
+).pipe(
+  Layer.provide(NodeHttpClient.layer)
+)
+
+const program = Effect.gen(function*() {
+  const { lookupPostcode } = yield* PostcodesClient
+  return yield* lookupPostcode("EC1A1BB")
+}).pipe(
+  Effect.provide(AppLayer)
+)
+```
+
+`PostcodesClient.layer` bundles the in-memory rate limiter but requires you to supply
+the HTTP client — that is why `Layer.provide(NodeHttpClient.layer)` is chained after.
+
+## Using in an Effect application
+
+If your application already has a `Layer` composition, merge `AppLayer` into your
+existing layer graph:
+
+```typescript
+const MainLayer = Layer.mergeAll(
+  AppLayer,
+  DatabaseLayer,
+  // ...
+)
+```

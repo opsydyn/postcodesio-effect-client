@@ -3,4 +3,44 @@ title: Configure rate limiting
 description: Tune the adaptive rate limiter for your use case.
 ---
 
-Coming soon.
+`PostcodesClient.Default` and `PostcodesClient.layer` both include an in-memory
+rate limiter with adaptive 429/`Retry-After` feedback. When postcodes.io returns
+a `429 Too Many Requests` response the limiter automatically backs off, then
+resumes at a pace it learned from the server's `Retry-After` header.
+
+The default pacing is conservative: 30 requests per 10 seconds. Tune it via
+`ApiConfig.rateLimit`.
+
+## Adjust the pacing
+
+```typescript
+import { Duration, Effect, Layer } from "effect"
+import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient"
+import { PostcodesClient, makeApiConfig } from "@effect-postcodes/client"
+
+const layer = PostcodesClient.layer(
+  makeApiConfig({
+    rateLimit: {
+      window: Duration.seconds(5),
+      limit: 50,
+    },
+  })
+).pipe(Layer.provide(FetchHttpClient.layer))
+
+const program = Effect.gen(function*() {
+  const { bulkLookupPostcodes } = yield* PostcodesClient
+  return yield* bulkLookupPostcodes(["SW1A1AA", "EC1A1BB", "EH25 9NJ"])
+}).pipe(Effect.provide(layer))
+```
+
+## How the adaptive feedback works
+
+The limiter cycles through four phases:
+
+1. **Inactive** — no 429 received yet; requests are not throttled by the adaptive system
+2. **Cooldown** — a 429 was received; the limiter waits for the `Retry-After` duration
+3. **Learning** — the cooldown expired; the limiter measures the successful request rate
+4. **Learned** — the limiter maintains the measured pace automatically
+
+This is powered by Effect's `RateLimiterStore` adaptive consume/feedback API
+introduced in `4.0.0-beta.88`.
