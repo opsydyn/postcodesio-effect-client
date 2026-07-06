@@ -3,4 +3,31 @@ title: "@effect-postcodes/client"
 description: Effect-native TypeScript client for the postcodes.io API.
 ---
 
+import { LinkCard, CardGrid } from '@astrojs/starlight/components'
+
 Effect-native TypeScript client for the [postcodes.io](https://postcodes.io) API.
+Adaptive rate limiting, typed errors, and full [Effect](https://effect.website) layer
+composition built in.
+
+<CardGrid>
+  <LinkCard
+    title="Tutorial"
+    href="/tutorial/getting-started"
+    description="Get from install to working code in five minutes."
+  />
+  <LinkCard
+    title="How-to guides"
+    href="/guides/use-with-nodejs"
+    description="Step-by-step for specific tasks: Node.js, Scottish postcodes, rate limiting, testing."
+  />
+  <LinkCard
+    title="Reference"
+    href="/reference/api"
+    description="API signatures, error types, and configuration fields."
+  />
+  <LinkCard
+    title="Explanation"
+    href="/explanation/effect-layers-model"
+    description="Why Effect layers, why three entry points, what Context.Service gives you."
+  />
+</CardGrid>

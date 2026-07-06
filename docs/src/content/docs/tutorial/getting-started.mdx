@@ -3,4 +3,116 @@ title: Getting started
 description: Build a working postcode lookup script from scratch.
 ---
 
-Coming soon.
+By the end of this tutorial you will have a TypeScript script that looks up a real
+UK postcode and prints structured data to your terminal — including handling the
+case where a postcode doesn't exist.
+
+## Prerequisites
+
+- Node.js ≥22 or [Bun](https://bun.sh)
+- A TypeScript project (or create a fresh directory with `bun init`)
+
+## 1. Install
+
+```bash
+npm install @effect-postcodes/client effect
+```
+
+`@effect/platform-node` is only needed if you later swap to Node.js's native HTTP
+client. The default `FetchHttpClient` works without it.
+
+## 2. Create `lookup.ts`
+
+```typescript
+import { Effect } from "effect"
+import { PostcodesClient } from "@effect-postcodes/client"
+
+const program = Effect.gen(function*() {
+  // yield* PostcodesClient gives you the four service methods
+  const { lookupPostcode } = yield* PostcodesClient
+
+  // Calls the real postcodes.io API
+  const result = yield* lookupPostcode("SW1A1AA")
+
+  console.log(JSON.stringify(result, null, 2))
+})
+
+// PostcodesClient.Default bundles everything:
+//   - FetchHttpClient for HTTP
+//   - In-memory rate limiter with adaptive 429/Retry-After backoff
+Effect.runPromise(
+  program.pipe(Effect.provide(PostcodesClient.Default))
+)
+```
+
+## 3. Run it
+
+```bash
+bun run lookup.ts
+# or: npx tsx lookup.ts
+```
+
+You should see output like:
+
+```json
+{
+  "postcode": "SW1A 1AA",
+  "country": "England",
+  "region": "London",
+  "longitude": -0.141588,
+  "latitude": 51.501009,
+  "parliamentary_constituency": "Cities of London and Westminster",
+  ...
+}
+```
+
+## 4. Handle a postcode that doesn't exist
+
+```typescript
+import { Effect } from "effect"
+import { PostcodesClient, isApiNotFoundError } from "@effect-postcodes/client"
+
+const program = Effect.gen(function*() {
+  const { lookupPostcode } = yield* PostcodesClient
+
+  const result = yield* lookupPostcode("ZZ99ZZ").pipe(
+    Effect.catchIf(isApiNotFoundError, (err) =>
+      Effect.sync(() => {
+        console.log(`Not found: ${err.identifier}`)
+        return null
+      })
+    )
+  )
+
+  if (result) {
+    console.log(JSON.stringify(result, null, 2))
+  }
+})
+
+Effect.runPromise(
+  program.pipe(Effect.provide(PostcodesClient.Default))
+)
+```
+
+Run it:
+
+```bash
+bun run lookup.ts
+# Not found: ZZ99ZZ
+```
+
+`isApiNotFoundError` is a typed guard — TypeScript narrows `err` to `ApiNotFoundError`,
+which carries the resource name, the identifier that wasn't found, and the raw API
+error message.
+
+## What you built
+
+You looked up a real postcode, saw structured data, and handled the 404 case with
+a typed guard. `PostcodesClient.Default` wired the HTTP client and rate limiter for
+you automatically.
+
+## Next steps
+
+- [Use with Node.js](/guides/use-with-nodejs) — swap to a Node-native HTTP client
+- [Handle Scottish postcodes](/guides/handle-scottish-postcodes) — work with `region: null`
+- [Testing with a mock service](/guides/testing-with-mock-service) — write tests without hitting postcodes.io
