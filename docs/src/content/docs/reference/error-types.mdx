@@ -3,4 +3,53 @@ title: Error types
 description: All possible errors from ApiServiceError.
 ---
 
-Coming soon.
+All service methods return `Effect<Result, ApiServiceError>` where:
+
+```typescript
+type ApiServiceError =
+  | ApiNotFoundError      // typed 404
+  | HttpClientError       // network / transport failure
+  | SchemaError           // unexpected response shape
+  | RateLimiterError      // rate limiter store error
+```
+
+## `ApiNotFoundError`
+
+The postcode, outcode, or place code was not found.
+
+```typescript
+interface ApiNotFoundError {
+  readonly _tag: "ApiNotFoundError"
+  readonly resource: string       // "postcode" | "outcode" | "place"
+  readonly identifier: string     // the value that was not found
+  readonly message: string
+  readonly cause: ErrorEnvelope   // { status: 404, error: string }
+}
+```
+
+Catch with the exported `isApiNotFoundError` guard:
+
+```typescript
+import { isApiNotFoundError } from "@effect-postcodes/client"
+
+yield* lookupPostcode("ZZ99ZZ").pipe(
+  Effect.catchIf(isApiNotFoundError, (err) =>
+    Effect.succeed(`${err.resource} not found: ${err.identifier}`)
+  )
+)
+```
+
+## `HttpClientError`
+
+Network or transport failure from `effect/unstable/http/HttpClientError`.
+Catch with `HttpClientError.isHttpClientError` from that module.
+
+## `SchemaError`
+
+The postcodes.io API returned a shape that does not match the expected schema.
+This is rare in production but can indicate a breaking API change upstream.
+
+## `RateLimiterError`
+
+The rate limiter store returned an error. Only surfaces if you replace `.Default`
+with a custom `RateLimiterStore` that can fail.

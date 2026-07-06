@@ -3,4 +3,42 @@ title: API reference
 description: Full method signatures for PostcodesClient.
 ---
 
-Coming soon.
+## `PostcodesClient`
+
+A `Context.Service` providing four methods for the postcodes.io API.
+
+### Methods
+
+| Method | Parameters | Returns |
+|--------|-----------|---------|
+| `lookupPostcode` | `postcode: string` | `Effect<PostcodeResult, ApiServiceError>` |
+| `bulkLookupPostcodes` | `postcodes: readonly string[]` | `Effect<readonly BulkLookupItem[], ApiServiceError>` |
+| `findOutcode` | `outcode: string` | `Effect<OutcodeResult, ApiServiceError>` |
+| `findPlace` | `code: string` — OS Open Names ID | `Effect<PlaceResult, ApiServiceError>` |
+
+### Static members
+
+| Member | Type | Description |
+|--------|------|-------------|
+| `.Default` | `Layer<PostcodesClient>` | Pre-wired: FetchHttpClient + in-memory rate limiter |
+| `.layer(config?)` | `(config?: ApiConfig) => Layer<PostcodesClient, never, HttpClient>` | Bundles rate limiter; requires you to provide an HttpClient |
+| `.make(config?)` | `(config?: ApiConfig) => Effect<PostcodesClient.Service>` | Resolves the service directly — for scripts and top-level programs |
+
+## Domain types
+
+Imported from `@effect-postcodes/client`:
+
+- `PostcodeResult` — single postcode lookup result; `region` is `string | null`
+- `OutcodeResult` — outward code data
+- `PlaceResult` — OS Open Names place record; place codes are opaque IDs like `osgb4000000074564391`
+- `BulkLookupItem` — `{ query: string; result: PostcodeResult | null }` — `result` is null for unknown postcodes
+- `ErrorEnvelope` — `{ status: 404; error: string }` — raw postcodes.io error body
+
+## Full TypeDoc
+
+For full type signatures of every exported field, run:
+
+```bash
+bun run docs:api
+# opens docs/api/index.html
+```

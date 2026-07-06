@@ -3,4 +3,50 @@ title: Why three entry points
 description: The design rationale behind .Default, .layer, and .make.
 ---
 
-Coming soon.
+`PostcodesClient` exposes three ways to access the service. They exist to serve
+different contexts without compromising composability.
+
+## `.Default`
+
+A fully wired `Layer<PostcodesClient>` — no configuration needed.
+
+```typescript
+program.pipe(Effect.provide(PostcodesClient.Default))
+```
+
+Use `.Default` for scripts, examples, quick integrations, and any program that
+does not need to customise the HTTP client. It bundles both `FetchHttpClient`
+and the in-memory rate limiter.
+
+## `.layer(config?)`
+
+A `Layer<PostcodesClient, never, HttpClient.HttpClient>` — it bundles the rate
+limiter but requires you to supply an HTTP client.
+
+```typescript
+PostcodesClient.layer({ baseUrl: "..." }).pipe(
+  Layer.provide(NodeHttpClient.layer)
+)
+```
+
+Use `.layer` when you have an existing `HttpClient` in your layer graph, or when
+you want `NodeHttpClient` for Node.js-native performance. This is the production-grade
+composition path for Effect applications.
+
+## `.make(config?)`
+
+An `Effect<PostcodesClient.Service>` — builds the service directly, bundling
+everything internally.
+
+```typescript
+const client = await Effect.runPromise(PostcodesClient.make())
+const result = await Effect.runPromise(client.lookupPostcode("SW1A1AA"))
+```
+
+Use `.make` in top-level scripts or programs that call `Effect.runPromise` once.
+It avoids any layer composition at all.
+
+## The tradeoff in one sentence
+
+`.Default` and `.make` are the easiest paths; `.layer` is the most composable.
+All three produce identical service behaviour — only the wiring style differs.

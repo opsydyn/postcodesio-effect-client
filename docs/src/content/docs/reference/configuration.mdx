@@ -3,4 +3,46 @@ title: Configuration
 description: ApiConfig fields and defaults.
 ---
 
-Coming soon.
+```typescript
+interface ApiConfig {
+  readonly baseUrl: string
+  readonly authToken?: string | undefined
+  readonly rateLimit?: {
+    readonly window: Duration.Input
+    readonly limit: number
+  } | undefined
+}
+```
+
+## Default values
+
+```typescript
+const defaultApiConfig: ApiConfig = {
+  baseUrl: "https://api.postcodes.io",
+}
+```
+
+The default rate limit is 30 requests per 10 seconds.
+
+## Fields
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `baseUrl` | `string` | `"https://api.postcodes.io"` | Base URL for all API requests |
+| `authToken` | `string \| undefined` | `undefined` | Adds `Authorization: Bearer <token>` header if set |
+| `rateLimit.window` | `Duration.Input` | `Duration.seconds(10)` | Time window for the rate limiter |
+| `rateLimit.limit` | `number` | `30` | Maximum requests per window |
+
+`Duration.Input` accepts strings like `"5 seconds"` or `"1 minute"`, numbers (milliseconds), or a `Duration` value.
+
+## Create a config
+
+```typescript
+import { makeApiConfig } from "@effect-postcodes/client"
+
+const config = makeApiConfig({
+  rateLimit: { window: "5 seconds", limit: 50 }
+})
+```
+
+`makeApiConfig` shallow-merges your overrides with `defaultApiConfig`.

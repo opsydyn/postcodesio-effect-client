@@ -3,4 +3,52 @@ title: Effect layers model
 description: How Context.Service and Layer compose in @effect-postcodes/client.
 ---
 
-Coming soon.
+If you're new to Effect, `yield* PostcodesClient` and `Effect.provide(PostcodesClient.Default)`
+can look unfamiliar. This page explains what's happening and why.
+
+## Services are typed dependencies
+
+`PostcodesClient` is a `Context.Service` — a typed dependency that your Effect
+programs can declare they need. When your program writes:
+
+```typescript
+const { lookupPostcode } = yield* PostcodesClient
+```
+
+it is saying: "I need the `PostcodesClient` service to be in context." Effect
+enforces this at compile time. If you forget `Effect.provide(...)`, TypeScript
+will tell you the program's `R` channel still contains `PostcodesClient` and
+cannot be run.
+
+## Layers are providers
+
+A `Layer` is a description of how to build one or more services. `PostcodesClient.Default`
+is a `Layer<PostcodesClient>` — it knows how to construct a `PostcodesClient` instance
+(using `FetchHttpClient` and an in-memory rate limiter) and registers it in the
+program's context.
+
+```typescript
+// "wire this program to the Default layer"
+program.pipe(Effect.provide(PostcodesClient.Default))
+```
+
+## Why this matters for testing
+
+Because the service lives in context — not as a global or an imported module —
+you can replace it entirely in tests without any mocking framework:
+
+```typescript
+Layer.succeed(PostcodesClient, {
+  lookupPostcode: (_) => Effect.succeed(mockResult),
+  // ...
+})
+```
+
+TypeScript checks that your mock satisfies the same interface as the real
+implementation. No monkey-patching, no module interception, no hidden coupling.
+
+## Further reading
+
+The Effect documentation at [effect.website](https://effect.website) covers
+`Context`, `Layer`, and service composition in depth. The concepts transfer
+directly — `PostcodesClient` uses the same primitives as any other Effect service.
