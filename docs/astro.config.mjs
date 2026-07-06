@@ -1,11 +1,21 @@
 import { defineConfig } from 'astro/config'
 import starlight from '@astrojs/starlight'
+import starlightOpenAPI, { openAPISidebarGroups } from 'starlight-openapi'
 
 export default defineConfig({
   integrations: [
     starlight({
       title: '@effect-postcodes/client',
       description: 'Effect-native TypeScript client for the postcodes.io API',
+      plugins: [
+        starlightOpenAPI([
+          {
+            base: 'openapi',
+            label: 'HTTP endpoints',
+            schema: '../openapi/spec.yaml',
+          },
+        ]),
+      ],
       sidebar: [
         { label: 'Overview', link: '/' },
         {
@@ -38,6 +48,7 @@ export default defineConfig({
             { label: 'Why three entry points', link: '/explanation/why-three-entry-points' },
           ],
         },
+        ...openAPISidebarGroups,
       ],
     }),
   ],
