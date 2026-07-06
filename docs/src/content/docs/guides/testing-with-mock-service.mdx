@@ -48,7 +48,7 @@ import { ApiNotFoundError, isApiNotFoundError } from "@effect-postcodes/client"
 
 const NotFoundClient = Layer.succeed(PostcodesClient, {
   lookupPostcode: (postcode) =>
-    Effect.fail(new ApiNotFoundError(
+    Effect.fail(ApiNotFoundError(
       "postcode",
       postcode,
       { status: 404, error: "Postcode not found" }
