@@ -2,8 +2,10 @@
 	"name": "@effect-postcodes/client",
 	"version": "0.1.0",
 	"description": "Effect-native TypeScript client for the postcodes.io API",
+	"keywords": ["effect", "postcodes", "postcodes.io", "typescript", "effect-ts"],
 	"author": "Alan Currie",
 	"license": "MIT",
+	"engines": { "node": ">=22.0.0" },
 	"type": "module",
 	"sideEffects": false,
 	"main": "./dist/index.mjs",
@@ -44,6 +46,9 @@
 	"peerDependencies": {
 		"effect": "^4.0.0-beta.90",
 		"@effect/platform-node": "^4.0.0-beta.90"
+	},
+	"peerDependenciesMeta": {
+		"@effect/platform-node": { "optional": true }
 	},
 	"devDependencies": {
 		"@arethetypeswrong/cli": "^0.18.3",
