@@ -74,7 +74,7 @@ export const make = (
   options: {
     readonly transformClient?: ((client: HttpClient.HttpClient) => Effect.Effect<HttpClient.HttpClient>) | undefined
   } = {}
-): PostcodesSpike => {
+): PostcodesApi => {
   const unexpectedStatus = (response: HttpClientResponse.HttpClientResponse) =>
     Effect.flatMap(
       Effect.orElseSucceed(response.json, () => "Unexpected status code"),
@@ -114,7 +114,7 @@ export const make = (
     (response: HttpClientResponse.HttpClientResponse) =>
       Effect.flatMap(
         HttpClientResponse.schemaBodyJson(schema)(response),
-        (cause) => Effect.fail(PostcodesSpikeError(tag, cause, response)),
+        (cause) => Effect.fail(PostcodesApiError(tag, cause, response)),
       )
   return {
     httpClient,
@@ -149,12 +149,12 @@ export const make = (
   }
 }
 
-export interface PostcodesSpike {
+export interface PostcodesApi {
   readonly httpClient: HttpClient.HttpClient
   /**
 * Lookup a postcode
 */
-readonly "lookupPostcode": <Config extends OperationConfig>(postcode: string, options: { readonly config?: Config | undefined } | undefined) => Effect.Effect<WithOptionalResponse<typeof LookupPostcode200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PostcodesSpikeError<"LookupPostcode404", typeof LookupPostcode404.Type>>
+readonly "lookupPostcode": <Config extends OperationConfig>(postcode: string, options: { readonly config?: Config | undefined } | undefined) => Effect.Effect<WithOptionalResponse<typeof LookupPostcode200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PostcodesApiError<"LookupPostcode404", typeof LookupPostcode404.Type>>
   /**
 * Bulk postcode lookup
 */
@@ -162,33 +162,33 @@ readonly "bulkLookupPostcodes": <Config extends OperationConfig>(options: { read
   /**
 * Find an outward code
 */
-readonly "findOutcode": <Config extends OperationConfig>(outcode: string, options: { readonly config?: Config | undefined } | undefined) => Effect.Effect<WithOptionalResponse<typeof FindOutcode200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PostcodesSpikeError<"FindOutcode404", typeof FindOutcode404.Type>>
+readonly "findOutcode": <Config extends OperationConfig>(outcode: string, options: { readonly config?: Config | undefined } | undefined) => Effect.Effect<WithOptionalResponse<typeof FindOutcode200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PostcodesApiError<"FindOutcode404", typeof FindOutcode404.Type>>
   /**
 * Find a place by ID
 */
-readonly "findPlace": <Config extends OperationConfig>(code: string, options: { readonly config?: Config | undefined } | undefined) => Effect.Effect<WithOptionalResponse<typeof FindPlace200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PostcodesSpikeError<"FindPlace404", typeof FindPlace404.Type>>
+readonly "findPlace": <Config extends OperationConfig>(code: string, options: { readonly config?: Config | undefined } | undefined) => Effect.Effect<WithOptionalResponse<typeof FindPlace200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PostcodesApiError<"FindPlace404", typeof FindPlace404.Type>>
 }
 
-export interface PostcodesSpikeError<Tag extends string, E> {
+export interface PostcodesApiError<Tag extends string, E> {
   readonly _tag: Tag
   readonly request: HttpClientRequest.HttpClientRequest
   readonly response: HttpClientResponse.HttpClientResponse
   readonly cause: E
 }
 
-class PostcodesSpikeErrorImpl extends Data.Error<{
+class PostcodesApiErrorImpl extends Data.Error<{
   _tag: string
   cause: any
   request: HttpClientRequest.HttpClientRequest
   response: HttpClientResponse.HttpClientResponse
 }> {}
 
-export const PostcodesSpikeError = <Tag extends string, E>(
+export const PostcodesApiError = <Tag extends string, E>(
   tag: Tag,
   cause: E,
   response: HttpClientResponse.HttpClientResponse,
-): PostcodesSpikeError<Tag, E> =>
-  new PostcodesSpikeErrorImpl({
+): PostcodesApiError<Tag, E> =>
+  new PostcodesApiErrorImpl({
     _tag: tag,
     cause,
     response,

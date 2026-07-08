@@ -3,7 +3,7 @@ import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient";
 import type * as HttpClient from "effect/unstable/http/HttpClient";
-import type { BulkLookupItem, OutcodeResult, PlaceResult, PostcodeResult } from "../generated/PostcodesSpike.ts";
+import type { BulkLookupItem, OutcodeResult, PlaceResult, PostcodeResult } from "../generated/PostcodesApi.ts";
 import { type ApiConfig, defaultApiConfig } from "./ApiConfig.ts";
 import type { ApiServiceError } from "./Errors.ts";
 import { makeApiService } from "./internal/ApiService.ts";

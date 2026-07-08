@@ -8,7 +8,7 @@ import {
 	OutcodeResult,
 	PlaceResult,
 	PostcodeResult,
-} from "../../generated/PostcodesSpike.ts";
+} from "../../generated/PostcodesApi.ts";
 
 export class PostcodeNotFound extends Schema.TaggedErrorClass<PostcodeNotFound>()(
 	"PostcodeNotFound",

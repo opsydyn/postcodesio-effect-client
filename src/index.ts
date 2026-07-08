@@ -18,4 +18,4 @@ export {
 	OutcodeResult,
 	PlaceResult,
 	PostcodeResult,
-} from "../generated/PostcodesSpike.ts";
+} from "../generated/PostcodesApi.ts";

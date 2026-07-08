@@ -22,7 +22,7 @@
 	"scripts": {
 		"build": "tsdown",
 		"dev": "tsdown --watch",
-		"generate": "openapigen --spec openapi/spec.yaml --name PostcodesSpike --format httpclient > generated/PostcodesSpike.ts",
+		"generate": "openapigen --spec openapi/spec.yaml --name PostcodesApi --format httpclient > generated/PostcodesApi.ts",
 		"pull:full-spec": "bun run scripts/pullFullSpec.ts",
 		"bundle:full-spec": "bun run pull:full-spec && bun run scripts/bundleFullSpec.ts",
 		"generate:full": "bun run bundle:full-spec && openapigen --spec openapi/full-upstream/openapi.bundle.yaml --name PostcodesFull --format httpclient > generated/PostcodesFull.ts",

@@ -3,7 +3,7 @@ import * as Predicate from "effect/Predicate";
 import type { SchemaError } from "effect/Schema";
 import type * as HttpClientError from "effect/unstable/http/HttpClientError";
 import type * as RateLimiter from "effect/unstable/persistence/RateLimiter";
-import type * as Generated from "../generated/PostcodesSpike.ts";
+import type * as Generated from "../generated/PostcodesApi.ts";
 
 export interface ApiNotFoundError {
 	readonly _tag: "ApiNotFoundError";
@@ -29,12 +29,12 @@ export const ApiNotFoundError = (
 	}) as ApiNotFoundError;
 
 export type GeneratedNotFoundError =
-	| Generated.PostcodesSpikeError<
+	| Generated.PostcodesApiError<
 			"LookupPostcode404",
 			Generated.LookupPostcode404
 	  >
-	| Generated.PostcodesSpikeError<"FindOutcode404", Generated.FindOutcode404>
-	| Generated.PostcodesSpikeError<"FindPlace404", Generated.FindPlace404>;
+	| Generated.PostcodesApiError<"FindOutcode404", Generated.FindOutcode404>
+	| Generated.PostcodesApiError<"FindPlace404", Generated.FindPlace404>;
 
 export type ApiServiceError =
 	| HttpClientError.HttpClientError

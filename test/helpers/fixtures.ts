@@ -1,5 +1,5 @@
+import type * as PostcodesApi from "../../generated/PostcodesApi.ts";
 import type * as PostcodesFull from "../../generated/PostcodesFull.ts";
-import type * as PostcodesSpike from "../../generated/PostcodesSpike.ts";
 
 export const postcodeResult = {
 	postcode: "SW1A 1AA",
@@ -38,12 +38,12 @@ export const postcodeResult = {
 		nuts: "TLI32",
 		pfa: "E23000001",
 	},
-} satisfies PostcodesSpike.LookupPostcode200["result"];
+} satisfies PostcodesApi.LookupPostcode200["result"];
 
 export const lookupPostcodeResponse = {
 	status: 200,
 	result: postcodeResult,
-} satisfies PostcodesSpike.LookupPostcode200;
+} satisfies PostcodesApi.LookupPostcode200;
 
 // Scottish postcodes can return a null region — postcodes.io's own published
 // spec declares it non-nullable, but live responses for e.g. EH25 9NJ violate
@@ -53,12 +53,12 @@ export const scottishPostcodeResult = {
 	postcode: "EH25 9NJ",
 	country: "Scotland",
 	region: null,
-} satisfies PostcodesSpike.LookupPostcode200["result"];
+} satisfies PostcodesApi.LookupPostcode200["result"];
 
 export const lookupScottishPostcodeResponse = {
 	status: 200,
 	result: scottishPostcodeResult,
-} satisfies PostcodesSpike.LookupPostcode200;
+} satisfies PostcodesApi.LookupPostcode200;
 
 export const bulkLookupPostcodesResponse = {
 	status: 200,
@@ -66,12 +66,12 @@ export const bulkLookupPostcodesResponse = {
 		{ query: "SW1A1AA", result: postcodeResult },
 		{ query: "ZZ99ZZ", result: null },
 	],
-} satisfies PostcodesSpike.BulkLookupPostcodes200;
+} satisfies PostcodesApi.BulkLookupPostcodes200;
 
 export const lookupPostcodeNotFoundResponse = {
 	status: 404,
 	error: "Postcode not found",
-} satisfies PostcodesSpike.LookupPostcode404;
+} satisfies PostcodesApi.LookupPostcode404;
 
 export const outcodeResponse = {
 	status: 200,
@@ -88,12 +88,12 @@ export const outcodeResponse = {
 		parish: ["Westminster, unparished area"],
 		parliamentary_constituency: ["Cities of London and Westminster"],
 	},
-} satisfies PostcodesSpike.FindOutcode200;
+} satisfies PostcodesApi.FindOutcode200;
 
 export const outcodeNotFoundResponse = {
 	status: 404,
 	error: "Outcode not found",
-} satisfies PostcodesSpike.FindOutcode404;
+} satisfies PostcodesApi.FindOutcode404;
 
 export const placeResponse = {
 	status: 200,
@@ -123,9 +123,9 @@ export const placeResponse = {
 } satisfies PostcodesFull.RandomPlace200;
 
 export const findPlaceResponse =
-	placeResponse satisfies PostcodesSpike.FindPlace200;
+	placeResponse satisfies PostcodesApi.FindPlace200;
 
 export const findPlaceNotFoundResponse = {
 	status: 404,
 	error: "Place not found",
-} satisfies PostcodesSpike.FindPlace404;
+} satisfies PostcodesApi.FindPlace404;
