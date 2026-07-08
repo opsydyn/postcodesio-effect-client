@@ -21,18 +21,18 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PostcodeEnvelope'
-        '404':
+                $ref: "#/components/schemas/PostcodeEnvelope"
+        "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorEnvelope'
+                $ref: "#/components/schemas/ErrorEnvelope"
   /postcodes:
     post:
       operationId: bulkLookupPostcodes
@@ -43,14 +43,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BulkLookupRequest'
+              $ref: "#/components/schemas/BulkLookupRequest"
       responses:
-        '200':
+        "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BulkPostcodeEnvelope'
+                $ref: "#/components/schemas/BulkPostcodeEnvelope"
   /outcodes/{outcode}:
     get:
       operationId: findOutcode
@@ -63,18 +63,18 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OutcodeEnvelope'
-        '404':
+                $ref: "#/components/schemas/OutcodeEnvelope"
+        "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorEnvelope'
+                $ref: "#/components/schemas/ErrorEnvelope"
   /places/{code}:
     get:
       operationId: findPlace
@@ -87,18 +87,18 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PlaceEnvelope'
-        '404':
+                $ref: "#/components/schemas/PlaceEnvelope"
+        "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorEnvelope'
+                $ref: "#/components/schemas/ErrorEnvelope"
 components:
   schemas:
     ErrorEnvelope:
@@ -114,7 +114,21 @@ components:
     PostcodeCodes:
       type: object
       additionalProperties: false
-      required: [admin_district, admin_ward, parish, parliamentary_constituency, ccg, ccg_id, ced, lau2, lsoa, msoa, nuts, pfa]
+      required:
+        [
+          admin_district,
+          admin_ward,
+          parish,
+          parliamentary_constituency,
+          ccg,
+          ccg_id,
+          ced,
+          lau2,
+          lsoa,
+          msoa,
+          nuts,
+          pfa,
+        ]
       properties:
         admin_district: { type: string }
         admin_ward: { type: string }
@@ -164,23 +178,23 @@ components:
         european_electoral_region: { type: string }
         primary_care_trust: { type: string }
         region:
-          type: [string, 'null']
+          type: [string, "null"]
         lsoa: { type: string }
         msoa: { type: string }
         parish:
-          type: [string, 'null']
+          type: [string, "null"]
         parliamentary_constituency: { type: string }
         admin_county:
-          type: [string, 'null']
+          type: [string, "null"]
         admin_district: { type: string }
         admin_ward: { type: string }
         ccg: { type: string }
         ced:
-          type: [string, 'null']
+          type: [string, "null"]
         nuts: { type: string }
         pfa: { type: string }
         codes:
-          $ref: '#/components/schemas/PostcodeCodes'
+          $ref: "#/components/schemas/PostcodeCodes"
     PostcodeEnvelope:
       type: object
       additionalProperties: false
@@ -188,7 +202,7 @@ components:
       properties:
         status: { type: integer, enum: [200] }
         result:
-          $ref: '#/components/schemas/PostcodeResult'
+          $ref: "#/components/schemas/PostcodeResult"
     BulkLookupRequest:
       type: object
       additionalProperties: false
@@ -207,8 +221,8 @@ components:
         query: { type: string }
         result:
           oneOf:
-            - $ref: '#/components/schemas/PostcodeResult'
-            - type: 'null'
+            - $ref: "#/components/schemas/PostcodeResult"
+            - type: "null"
     BulkPostcodeEnvelope:
       type: object
       additionalProperties: false
@@ -218,21 +232,34 @@ components:
         result:
           type: array
           items:
-            $ref: '#/components/schemas/BulkLookupItem'
+            $ref: "#/components/schemas/BulkLookupItem"
     OutcodeResult:
       type: object
       additionalProperties: false
-      required: [outcode, longitude, latitude, northings, eastings, admin_county, admin_district, admin_ward, country, parish, parliamentary_constituency]
+      required:
+        [
+          outcode,
+          longitude,
+          latitude,
+          northings,
+          eastings,
+          admin_county,
+          admin_district,
+          admin_ward,
+          country,
+          parish,
+          parliamentary_constituency,
+        ]
       properties:
         outcode: { type: string }
         longitude:
-          type: [number, 'null']
+          type: [number, "null"]
         latitude:
-          type: [number, 'null']
+          type: [number, "null"]
         northings:
-          type: [integer, 'null']
+          type: [integer, "null"]
         eastings:
-          type: [integer, 'null']
+          type: [integer, "null"]
         admin_county:
           type: array
           items: { type: string }
@@ -258,28 +285,46 @@ components:
       properties:
         status: { type: integer, enum: [200] }
         result:
-          $ref: '#/components/schemas/OutcodeResult'
+          $ref: "#/components/schemas/OutcodeResult"
     PlaceResult:
       type: object
       additionalProperties: false
-      required: [code, name_1, local_type, outcode, county_unitary, county_unitary_type, region, country, longitude, latitude, eastings, northings, min_eastings, min_northings, max_eastings, max_northings]
+      required:
+        [
+          code,
+          name_1,
+          local_type,
+          outcode,
+          county_unitary,
+          county_unitary_type,
+          region,
+          country,
+          longitude,
+          latitude,
+          eastings,
+          northings,
+          min_eastings,
+          min_northings,
+          max_eastings,
+          max_northings,
+        ]
       properties:
         code: { type: string }
         name_1: { type: string }
         name_1_lang:
-          type: [string, 'null']
+          type: [string, "null"]
         name_2:
-          type: [string, 'null']
+          type: [string, "null"]
         name_2_lang:
-          type: [string, 'null']
+          type: [string, "null"]
         local_type: { type: string }
         outcode: { type: string }
         county_unitary: { type: string }
         county_unitary_type: { type: string }
         district_borough:
-          type: [string, 'null']
+          type: [string, "null"]
         district_borough_type:
-          type: [string, 'null']
+          type: [string, "null"]
         region: { type: string }
         country: { type: string }
         longitude: { type: number }
@@ -297,4 +342,4 @@ components:
       properties:
         status: { type: integer, enum: [200] }
         result:
-          $ref: '#/components/schemas/PlaceResult'
+          $ref: "#/components/schemas/PlaceResult"

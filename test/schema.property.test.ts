@@ -1,17 +1,16 @@
 import { describe, test } from "bun:test";
+
 import { Schema } from "effect";
 import { FastCheck } from "effect/testing";
-import {
-	BulkLookupItem,
-	ErrorEnvelope,
-	PostcodeResult,
-} from "../src/index.ts";
+
+import { BulkLookupItem, ErrorEnvelope, PostcodeResult } from "../src/index.ts";
 
 describe("schema properties", () => {
 	test("PostcodeResult region is always string | null — never undefined", () => {
 		FastCheck.assert(
-			FastCheck.property(Schema.toArbitrary(PostcodeResult), (value) =>
-				value.region === null || typeof value.region === "string",
+			FastCheck.property(
+				Schema.toArbitrary(PostcodeResult),
+				(value) => value.region === null || typeof value.region === "string",
 			),
 		);
 	});
@@ -28,17 +27,13 @@ describe("schema properties", () => {
 
 	test("BulkLookupItem result is PostcodeResult | null — never undefined", () => {
 		FastCheck.assert(
-			FastCheck.property(Schema.toArbitrary(BulkLookupItem), (item) =>
-				item.result !== undefined,
-			),
+			FastCheck.property(Schema.toArbitrary(BulkLookupItem), (item) => item.result !== undefined),
 		);
 	});
 
 	test("ErrorEnvelope status is always the literal 404", () => {
 		FastCheck.assert(
-			FastCheck.property(Schema.toArbitrary(ErrorEnvelope), (envelope) =>
-				envelope.status === 404,
-			),
+			FastCheck.property(Schema.toArbitrary(ErrorEnvelope), (envelope) => envelope.status === 404),
 		);
 	});
 

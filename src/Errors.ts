@@ -3,6 +3,7 @@ import * as Predicate from "effect/Predicate";
 import type { SchemaError } from "effect/Schema";
 import type * as HttpClientError from "effect/unstable/http/HttpClientError";
 import type * as RateLimiter from "effect/unstable/persistence/RateLimiter";
+
 import type * as Generated from "../generated/PostcodesApi.ts";
 
 export interface ApiNotFoundError {
@@ -29,10 +30,7 @@ export const ApiNotFoundError = (
 	}) as ApiNotFoundError;
 
 export type GeneratedNotFoundError =
-	| Generated.PostcodesApiError<
-			"LookupPostcode404",
-			Generated.LookupPostcode404
-	  >
+	| Generated.PostcodesApiError<"LookupPostcode404", Generated.LookupPostcode404>
 	| Generated.PostcodesApiError<"FindOutcode404", Generated.FindOutcode404>
 	| Generated.PostcodesApiError<"FindPlace404", Generated.FindPlace404>;
 
@@ -45,9 +43,7 @@ export type ApiServiceError =
 export const isApiNotFoundError = (input: unknown): input is ApiNotFoundError =>
 	Predicate.isTagged(input, "ApiNotFoundError");
 
-export const isGeneratedNotFoundError = (
-	input: unknown,
-): input is GeneratedNotFoundError =>
+export const isGeneratedNotFoundError = (input: unknown): input is GeneratedNotFoundError =>
 	Predicate.isTagged(input, "LookupPostcode404") ||
 	Predicate.isTagged(input, "FindOutcode404") ||
 	Predicate.isTagged(input, "FindPlace404");

@@ -14,10 +14,5 @@
 		"skipLibCheck": true,
 		"plugins": [{ "name": "@effect/language-service" }]
 	},
-	"include": [
-		"generated/**/*.ts",
-		"src/**/*.ts",
-		"scripts/**/*.ts",
-		"test/**/*.ts"
-	]
+	"include": ["generated/**/*.ts", "src/**/*.ts", "scripts/**/*.ts", "test/**/*.ts"]
 }

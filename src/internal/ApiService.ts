@@ -2,13 +2,10 @@ import { Effect, Match } from "effect";
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as HttpClientRequest from "effect/unstable/http/HttpClientRequest";
 import * as RateLimiter from "effect/unstable/persistence/RateLimiter";
+
 import * as Generated from "../../generated/PostcodesApi.ts";
 import type { ApiConfig } from "../ApiConfig.ts";
-import {
-	ApiNotFoundError,
-	type ApiServiceError,
-	isGeneratedNotFoundError,
-} from "../Errors.ts";
+import { ApiNotFoundError, type ApiServiceError, isGeneratedNotFoundError } from "../Errors.ts";
 import { defaultRateLimit } from "./RateLimiting.ts";
 
 const configureHttpClient = (
@@ -19,16 +16,13 @@ const configureHttpClient = (
 	const configureRequest = Match.value(config.authToken).pipe(
 		Match.when(
 			undefined,
-			(): ((
-				request: HttpClientRequest.HttpClientRequest,
-			) => HttpClientRequest.HttpClientRequest) => prependBaseUrl,
+			(): ((request: HttpClientRequest.HttpClientRequest) => HttpClientRequest.HttpClientRequest) =>
+				prependBaseUrl,
 		),
 		Match.orElse(
 			(
 				authToken,
-			): ((
-				request: HttpClientRequest.HttpClientRequest,
-			) => HttpClientRequest.HttpClientRequest) =>
+			): ((request: HttpClientRequest.HttpClientRequest) => HttpClientRequest.HttpClientRequest) =>
 				(request) =>
 					HttpClientRequest.setHeader(
 						"authorization",
@@ -52,10 +46,7 @@ const mapGeneratedError =
 
 const encodePathSegment = (value: string): string => encodeURIComponent(value);
 
-export function makeApiServiceFromClient(
-	client: HttpClient.HttpClient,
-	config: ApiConfig,
-) {
+export function makeApiServiceFromClient(client: HttpClient.HttpClient, config: ApiConfig) {
 	const generated = Generated.make(configureHttpClient(client, config));
 
 	return {
@@ -100,8 +91,5 @@ export const makeApiService = Effect.fnUntraced(function* (config: ApiConfig) {
 	// Generated.make only types its client param as plain HttpClientError; the
 	// RateLimiterError this adds still flows through at runtime and is folded
 	// back into ApiServiceError by mapGeneratedError below.
-	return makeApiServiceFromClient(
-		rateLimitedClient as HttpClient.HttpClient,
-		config,
-	);
+	return makeApiServiceFromClient(rateLimitedClient as HttpClient.HttpClient, config);
 });

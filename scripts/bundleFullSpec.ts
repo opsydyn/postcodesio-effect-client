@@ -1,6 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { posix } from "node:path";
 import { fileURLToPath } from "node:url";
+
 import YAML from "yaml";
 
 const specRootUrl = new URL("../openapi/full-upstream/", import.meta.url);
@@ -20,8 +21,7 @@ type ResolvedLocalReference = {
 const structuredCache = new Map<string, unknown>();
 const textCache = new Map<string, string>();
 
-const isRemoteReference = (value: string): boolean =>
-	/^[a-z][a-z0-9+.-]*:/iu.test(value);
+const isRemoteReference = (value: string): boolean => /^[a-z][a-z0-9+.-]*:/iu.test(value);
 
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
 	value !== null && typeof value === "object" && !Array.isArray(value);
@@ -50,13 +50,8 @@ const splitReference = (reference: string): ReferenceTarget => {
 	};
 };
 
-const normalizeRelativePath = (
-	fromRelativePath: string,
-	targetRelativePath: string,
-): string =>
-	posix.normalize(
-		posix.join(posix.dirname(fromRelativePath), targetRelativePath),
-	);
+const normalizeRelativePath = (fromRelativePath: string, targetRelativePath: string): string =>
+	posix.normalize(posix.join(posix.dirname(fromRelativePath), targetRelativePath));
 
 const readStructured = async (relativePath: string): Promise<unknown> => {
 	const cached = structuredCache.get(relativePath);
@@ -65,9 +60,7 @@ const readStructured = async (relativePath: string): Promise<unknown> => {
 	}
 
 	const contents = await readFile(new URL(relativePath, specRootUrl), "utf8");
-	const parsed = relativePath.endsWith(".json")
-		? JSON.parse(contents)
-		: YAML.parse(contents);
+	const parsed = relativePath.endsWith(".json") ? JSON.parse(contents) : YAML.parse(contents);
 	structuredCache.set(relativePath, parsed);
 	return parsed;
 };
@@ -100,10 +93,7 @@ const resolvePointer = (
 	}
 
 	let current: unknown = document;
-	for (const token of fragment
-		.slice(1)
-		.split("/")
-		.map(decodeJsonPointerToken)) {
+	for (const token of fragment.slice(1).split("/").map(decodeJsonPointerToken)) {
 		if (Array.isArray(current)) {
 			const index = Number(token);
 			current = current[index];
@@ -130,10 +120,7 @@ const resolveLocalReference = async (
 		);
 	}
 
-	const targetRelativePath = normalizeRelativePath(
-		fromRelativePath,
-		targetPathPart,
-	);
+	const targetRelativePath = normalizeRelativePath(fromRelativePath, targetPathPart);
 	if (targetRelativePath.endsWith(".md")) {
 		if (fragment !== undefined) {
 			throw new Error(`Markdown refs do not support fragments: ${reference}`);
@@ -151,14 +138,9 @@ const resolveLocalReference = async (
 	};
 };
 
-const bundleNode = async (
-	currentRelativePath: string,
-	value: unknown,
-): Promise<unknown> => {
+const bundleNode = async (currentRelativePath: string, value: unknown): Promise<unknown> => {
 	if (Array.isArray(value)) {
-		return Promise.all(
-			value.map((item) => bundleNode(currentRelativePath, item)),
-		);
+		return Promise.all(value.map((item) => bundleNode(currentRelativePath, item)));
 	}
 
 	if (!isPlainObject(value)) {
@@ -170,33 +152,20 @@ const bundleNode = async (
 		!value.$ref.startsWith("#") &&
 		!isRemoteReference(value.$ref)
 	) {
-		const resolved = await resolveLocalReference(
-			currentRelativePath,
-			value.$ref,
-		);
-		const bundled = await bundleNode(
-			resolved.targetRelativePath,
-			resolved.value,
-		);
+		const resolved = await resolveLocalReference(currentRelativePath, value.$ref);
+		const bundled = await bundleNode(resolved.targetRelativePath, resolved.value);
 
-		const siblingEntries = Object.entries(value).filter(
-			([key]) => key !== "$ref",
-		);
+		const siblingEntries = Object.entries(value).filter(([key]) => key !== "$ref");
 		if (siblingEntries.length === 0) {
 			return bundled;
 		}
 
 		if (!isPlainObject(bundled)) {
-			throw new Error(
-				`Cannot merge sibling keys with non-object ref target for ${value.$ref}`,
-			);
+			throw new Error(`Cannot merge sibling keys with non-object ref target for ${value.$ref}`);
 		}
 
 		const siblingObject = Object.fromEntries(siblingEntries);
-		const bundledSiblings = await bundleNode(
-			currentRelativePath,
-			siblingObject,
-		);
+		const bundledSiblings = await bundleNode(currentRelativePath, siblingObject);
 		if (!isPlainObject(bundledSiblings)) {
 			throw new Error(`Unexpected non-object sibling bundle for ${value.$ref}`);
 		}
@@ -205,8 +174,7 @@ const bundleNode = async (
 
 	const outputEntries = await Promise.all(
 		Object.entries(value).map(
-			async ([key, nested]) =>
-				[key, await bundleNode(currentRelativePath, nested)] as const,
+			async ([key, nested]) => [key, await bundleNode(currentRelativePath, nested)] as const,
 		),
 	);
 	const output = Object.fromEntries(outputEntries);
@@ -223,9 +191,7 @@ const bundleNode = async (
 		}
 
 		if (Array.isArray(output.examples)) {
-			output.examples = output.examples.map(
-				(example) => parseBooleanLiteral(example) ?? example,
-			);
+			output.examples = output.examples.map((example) => parseBooleanLiteral(example) ?? example);
 		}
 	}
 

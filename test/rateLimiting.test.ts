@@ -1,9 +1,11 @@
 import { describe, expect, test } from "bun:test";
+
 import { Effect, Fiber, Ref } from "effect";
 import { TestClock } from "effect/testing";
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as HttpClientResponse from "effect/unstable/http/HttpClientResponse";
 import * as RateLimiter from "effect/unstable/persistence/RateLimiter";
+
 import { RateLimiterLive } from "../src/internal/RateLimiting.ts";
 
 describe("RateLimiterLive", () => {
@@ -15,10 +17,7 @@ describe("RateLimiterLive", () => {
 			const client = HttpClient.make((request) =>
 				Effect.gen(function* () {
 					yield* Ref.update(attempts, (n) => n + 1);
-					return HttpClientResponse.fromWeb(
-						request,
-						new Response(null, { status: 200 }),
-					);
+					return HttpClientResponse.fromWeb(request, new Response(null, { status: 200 }));
 				}),
 			).pipe(
 				HttpClient.withRateLimiter({
@@ -43,10 +42,7 @@ describe("RateLimiterLive", () => {
 		});
 
 		await Effect.runPromise(
-			program.pipe(
-				Effect.provide(RateLimiterLive),
-				Effect.provide(TestClock.layer()),
-			),
+			program.pipe(Effect.provide(RateLimiterLive), Effect.provide(TestClock.layer())),
 		);
 	});
 });

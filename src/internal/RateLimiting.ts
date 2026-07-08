@@ -10,5 +10,6 @@ export const defaultRateLimit: {
 	limit: 30,
 };
 
-export const RateLimiterLive: Layer.Layer<RateLimiter.RateLimiter> =
-	RateLimiter.layer.pipe(Layer.provide(RateLimiter.layerStoreMemory));
+export const RateLimiterLive: Layer.Layer<RateLimiter.RateLimiter> = RateLimiter.layer.pipe(
+	Layer.provide(RateLimiter.layerStoreMemory),
+);

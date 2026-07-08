@@ -1,8 +1,10 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+
 import { Effect } from "effect";
 import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient";
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as HttpClientRequest from "effect/unstable/http/HttpClientRequest";
+
 import * as PostcodesFull from "../generated/PostcodesFull.ts";
 import { makeApiConfig } from "../src/ApiConfig.ts";
 import {
@@ -21,9 +23,7 @@ const makeClient = (baseUrl: string) =>
 	Effect.gen(function* () {
 		const httpClient = yield* HttpClient.HttpClient;
 
-		return PostcodesFull.make(
-			configureHttpClient(httpClient, makeApiConfig({ baseUrl }).baseUrl),
-		);
+		return PostcodesFull.make(configureHttpClient(httpClient, makeApiConfig({ baseUrl }).baseUrl));
 	}).pipe(Effect.provide(FetchHttpClient.layer));
 
 let server: ReturnType<typeof startSpikeMockServer>;
@@ -51,10 +51,7 @@ describe("PostcodesFull with Elysia", () => {
 		expect(outcodeHttpResponse.status).toBe(200);
 		expect(outcode.result.outcode).toBe("SW1A");
 		expect(outcode.result.country).toEqual(["England"]);
-		expect(outcode.result.admin_district).toEqual([
-			"Westminster",
-			"Wandsworth",
-		]);
+		expect(outcode.result.admin_district).toEqual(["Westminster", "Wandsworth"]);
 
 		const randomPlace = await Effect.runPromise(client.randomPlace(undefined));
 

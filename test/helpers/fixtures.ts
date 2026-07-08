@@ -122,8 +122,7 @@ export const placeResponse = {
 	},
 } satisfies PostcodesFull.RandomPlace200;
 
-export const findPlaceResponse =
-	placeResponse satisfies PostcodesApi.FindPlace200;
+export const findPlaceResponse = placeResponse satisfies PostcodesApi.FindPlace200;
 
 export const findPlaceNotFoundResponse = {
 	status: 404,

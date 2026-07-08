@@ -2,6 +2,7 @@ import { Schema } from "effect";
 import * as HttpApi from "effect/unstable/httpapi/HttpApi";
 import * as HttpApiEndpoint from "effect/unstable/httpapi/HttpApiEndpoint";
 import * as HttpApiGroup from "effect/unstable/httpapi/HttpApiGroup";
+
 import {
 	BulkLookupItem,
 	BulkLookupRequest,
@@ -57,6 +58,4 @@ export class PostcodesApiGroup extends HttpApiGroup.make("postcodes")
 		}),
 	) {}
 
-export class Api extends HttpApi.make("postcodes-spike-api").add(
-	PostcodesApiGroup,
-) {}
+export class Api extends HttpApi.make("postcodes-spike-api").add(PostcodesApiGroup) {}

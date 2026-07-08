@@ -1,4 +1,5 @@
 import { Effect } from "effect";
+
 import { makeApiConfig, PostcodesClient } from "../index.ts";
 
 const client = await Effect.runPromise(PostcodesClient.make(makeApiConfig()));

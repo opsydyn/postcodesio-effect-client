@@ -1,5 +1,6 @@
 import { Match } from "effect";
 import { Elysia } from "elysia";
+
 import {
 	bulkLookupPostcodesResponse,
 	findPlaceNotFoundResponse,
@@ -24,9 +25,7 @@ export const startSpikeMockServer = (port = 0) =>
 			Match.value(params.postcode.replaceAll(" ", "").toUpperCase()).pipe(
 				Match.when("SW1A1AA", () => lookupPostcodeResponse),
 				Match.when("EH259NJ", () => lookupScottishPostcodeResponse),
-				Match.when("ZZ99ZZ", () =>
-					jsonResponse(lookupPostcodeNotFoundResponse, 404),
-				),
+				Match.when("ZZ99ZZ", () => jsonResponse(lookupPostcodeNotFoundResponse, 404)),
 				Match.orElse(() => jsonResponse(lookupPostcodeNotFoundResponse, 404)),
 			),
 		)
@@ -46,9 +45,7 @@ export const startSpikeMockServer = (port = 0) =>
 		.get("/random/places", () => placeResponse)
 		.listen(port);
 
-export const getSpikeMockServerBaseUrl = (
-	server: ReturnType<typeof startSpikeMockServer>,
-) =>
+export const getSpikeMockServerBaseUrl = (server: ReturnType<typeof startSpikeMockServer>) =>
 	Match.value(server.server?.port).pipe(
 		Match.when(undefined, () => {
 			throw new Error("Failed to determine Elysia mock server port");
@@ -56,8 +53,6 @@ export const getSpikeMockServerBaseUrl = (
 		Match.orElse((resolvedPort) => `http://127.0.0.1:${resolvedPort}`),
 	);
 
-export const stopSpikeMockServer = (
-	server: ReturnType<typeof startSpikeMockServer>,
-) => {
+export const stopSpikeMockServer = (server: ReturnType<typeof startSpikeMockServer>) => {
 	server.stop();
 };

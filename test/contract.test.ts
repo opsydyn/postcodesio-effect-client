@@ -1,6 +1,8 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+
 import { Effect, Layer, Match } from "effect";
 import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient";
+
 import { isApiNotFoundError, PostcodesClient } from "../src/index.ts";
 import {
 	getSpikeMockServerBaseUrl,
@@ -21,9 +23,7 @@ afterAll(() => {
 });
 
 const clientLayer = (url: string) =>
-	PostcodesClient.layer({ baseUrl: url }).pipe(
-		Layer.provide(FetchHttpClient.layer),
-	);
+	PostcodesClient.layer({ baseUrl: url }).pipe(Layer.provide(FetchHttpClient.layer));
 
 describe("@effect-postcodes/client contract", () => {
 	test("lookupPostcode, bulkLookupPostcodes, and 404 error flow", () =>
@@ -86,10 +86,8 @@ describe("@effect-postcodes/client contract", () => {
 			}).pipe(
 				Effect.provide(
 					Layer.succeed(PostcodesClient, {
-						lookupPostcode: (_: string) =>
-							Effect.succeed({ postcode: "MOCK 1AA" } as any),
-						bulkLookupPostcodes: (_: readonly string[]) =>
-							Effect.succeed([]),
+						lookupPostcode: (_: string) => Effect.succeed({ postcode: "MOCK 1AA" } as any),
+						bulkLookupPostcodes: (_: readonly string[]) => Effect.succeed([]),
 						findOutcode: (_: string) => Effect.die("not called"),
 						findPlace: (_: string) => Effect.die("not called"),
 					}),

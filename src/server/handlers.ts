@@ -1,16 +1,12 @@
 import { Effect, Layer } from "effect";
 import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient";
 import * as HttpApiBuilder from "effect/unstable/httpapi/HttpApiBuilder";
+
 import { makeApiConfig } from "../ApiConfig.ts";
 import { isApiNotFoundError } from "../Errors.ts";
 import { makeApiService } from "../internal/ApiService.ts";
 import { RateLimiterLive } from "../internal/RateLimiting.ts";
-import {
-	Api,
-	OutcodeNotFound,
-	PlaceNotFound,
-	PostcodeNotFound,
-} from "./Api.ts";
+import { Api, OutcodeNotFound, PlaceNotFound, PostcodeNotFound } from "./Api.ts";
 
 export const PostcodesApiHandlers = HttpApiBuilder.group(
 	Api,
@@ -23,8 +19,7 @@ export const PostcodesApiHandlers = HttpApiBuilder.group(
 				service.lookupPostcode(params.postcode).pipe(
 					Effect.catchIf(
 						isApiNotFoundError,
-						() =>
-							Effect.fail(new PostcodeNotFound({ postcode: params.postcode })),
+						() => Effect.fail(new PostcodeNotFound({ postcode: params.postcode })),
 						(other) => Effect.die(other),
 					),
 				),

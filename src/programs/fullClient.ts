@@ -2,6 +2,7 @@ import { Effect } from "effect";
 import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient";
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as HttpClientRequest from "effect/unstable/http/HttpClientRequest";
+
 import * as PostcodesFull from "../../generated/PostcodesFull.ts";
 import { makeApiConfig } from "../ApiConfig.ts";
 
@@ -13,9 +14,7 @@ const configureHttpClient = (
 
 const program = Effect.gen(function* () {
 	const httpClient = yield* HttpClient.HttpClient;
-	const client = PostcodesFull.make(
-		configureHttpClient(httpClient, makeApiConfig().baseUrl),
-	);
+	const client = PostcodesFull.make(configureHttpClient(httpClient, makeApiConfig().baseUrl));
 
 	const [outcode, outcodeResponse] = yield* client.FindOutcode("SW1A", {
 		config: { includeResponse: true },
@@ -33,8 +32,6 @@ const program = Effect.gen(function* () {
 	};
 });
 
-const result = await Effect.runPromise(
-	program.pipe(Effect.provide(FetchHttpClient.layer)),
-);
+const result = await Effect.runPromise(program.pipe(Effect.provide(FetchHttpClient.layer)));
 
 console.log(JSON.stringify(result, null, 2));

@@ -11,16 +11,16 @@ npm install @effect-postcodes/client effect
 ## Quick start
 
 ```typescript
-import { Effect } from "effect"
-import { PostcodesClient } from "@effect-postcodes/client"
+import { Effect } from "effect";
+import { PostcodesClient } from "@effect-postcodes/client";
 
-const program = Effect.gen(function*() {
-  const { lookupPostcode } = yield* PostcodesClient
-  const result = yield* lookupPostcode("SW1A1AA")
-  console.log(result.postcode, result.region)
-})
+const program = Effect.gen(function* () {
+	const { lookupPostcode } = yield* PostcodesClient;
+	const result = yield* lookupPostcode("SW1A1AA");
+	console.log(result.postcode, result.region);
+});
 
-Effect.runPromise(program.pipe(Effect.provide(PostcodesClient.Default)))
+Effect.runPromise(program.pipe(Effect.provide(PostcodesClient.Default)));
 ```
 
 ## Documentation
@@ -31,12 +31,12 @@ Browse the docs locally:
 bun run docs:dev   # http://localhost:4321
 ```
 
-| Section | What's there |
-|---------|-------------|
-| [Tutorial](/docs/src/content/docs/tutorial/getting-started.mdx) | From install to working code, step by step |
-| [How-to guides](/docs/src/content/docs/guides/) | Node.js, Scottish postcodes, rate limiting, testing |
-| [Reference](/docs/src/content/docs/reference/) | API, error types, configuration |
-| [Explanation](/docs/src/content/docs/explanation/) | Effect layers model, why three entry points |
+| Section                                                         | What's there                                        |
+| --------------------------------------------------------------- | --------------------------------------------------- |
+| [Tutorial](/docs/src/content/docs/tutorial/getting-started.mdx) | From install to working code, step by step          |
+| [How-to guides](/docs/src/content/docs/guides/)                 | Node.js, Scottish postcodes, rate limiting, testing |
+| [Reference](/docs/src/content/docs/reference/)                  | API, error types, configuration                     |
+| [Explanation](/docs/src/content/docs/explanation/)              | Effect layers model, why three entry points         |
 
 ## Notes
 

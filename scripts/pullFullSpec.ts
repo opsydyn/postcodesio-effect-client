@@ -1,14 +1,13 @@
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import { posix } from "node:path";
 import { fileURLToPath } from "node:url";
+
 import YAML from "yaml";
 
 const entryRelativePath = "openapi.yaml";
 const sourceBaseUrl =
 	"https://raw.githubusercontent.com/ideal-postcodes/postcodes.io/main/openapi/";
-const outputRoot = fileURLToPath(
-	new URL("../openapi/full-upstream/", import.meta.url),
-);
+const outputRoot = fileURLToPath(new URL("../openapi/full-upstream/", import.meta.url));
 const outputRootUrl = new URL("../openapi/full-upstream/", import.meta.url);
 
 type ManifestEntry = {
@@ -18,18 +17,12 @@ type ManifestEntry = {
 	readonly localRefs: ReadonlyArray<string>;
 };
 
-const isRemoteReference = (value: string): boolean =>
-	/^[a-z][a-z0-9+.-]*:/iu.test(value);
+const isRemoteReference = (value: string): boolean => /^[a-z][a-z0-9+.-]*:/iu.test(value);
 
 const isStructuredDocument = (relativePath: string): boolean =>
-	relativePath.endsWith(".yaml") ||
-	relativePath.endsWith(".yml") ||
-	relativePath.endsWith(".json");
+	relativePath.endsWith(".yaml") || relativePath.endsWith(".yml") || relativePath.endsWith(".json");
 
-const parseStructuredDocument = (
-	relativePath: string,
-	contents: string,
-): unknown => {
+const parseStructuredDocument = (relativePath: string, contents: string): unknown => {
 	if (relativePath.endsWith(".json")) {
 		return JSON.parse(contents) as unknown;
 	}
@@ -70,10 +63,7 @@ const collectLocalReferences = (value: unknown): ReadonlyArray<string> => {
 	return [...references].sort();
 };
 
-const normalizeReference = (
-	fromRelativePath: string,
-	reference: string,
-): string => {
+const normalizeReference = (fromRelativePath: string, reference: string): string => {
 	const [pathPart] = reference.split("#", 1);
 	if (!pathPart) {
 		throw new Error(
@@ -83,10 +73,7 @@ const normalizeReference = (
 	return posix.normalize(posix.join(posix.dirname(fromRelativePath), pathPart));
 };
 
-const writeOutputFile = async (
-	relativePath: string,
-	contents: string,
-): Promise<void> => {
+const writeOutputFile = async (relativePath: string, contents: string): Promise<void> => {
 	const fileUrl = new URL(relativePath, outputRootUrl);
 	await mkdir(fileURLToPath(new URL(".", fileUrl)), { recursive: true });
 	await writeFile(fileUrl, contents, "utf8");
@@ -140,9 +127,7 @@ const main = async (): Promise<void> => {
 		});
 	}
 
-	manifestEntries.sort((left, right) =>
-		left.relativePath.localeCompare(right.relativePath),
-	);
+	manifestEntries.sort((left, right) => left.relativePath.localeCompare(right.relativePath));
 
 	const manifest = {
 		sourceBaseUrl,
@@ -152,15 +137,9 @@ const main = async (): Promise<void> => {
 	};
 
 	const manifestPath = new URL("manifest.json", outputRootUrl);
-	await writeFile(
-		manifestPath,
-		`${JSON.stringify(manifest, null, 2)}\n`,
-		"utf8",
-	);
+	await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
 
-	console.log(
-		`Fetched ${manifestEntries.length} upstream spec files into ${outputRoot}`,
-	);
+	console.log(`Fetched ${manifestEntries.length} upstream spec files into ${outputRoot}`);
 };
 
 await main();
