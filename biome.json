@@ -71,6 +71,10 @@
 			"formatter": { "enabled": false }
 		},
 		{
+			"includes": [".flue/**"],
+			"linter": { "enabled": false }
+		},
+		{
 			"includes": ["**", "!src/programs/**", "!test/helpers/**"],
 			"plugins": [
 				"./node_modules/@catenarycloud/linteffect/rules/no-naked-object-state-update.grit"
