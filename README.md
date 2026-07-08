@@ -44,3 +44,9 @@ bun run docs:dev   # http://localhost:4321
 - `@effect/platform-node` is an optional peer dep — only needed when using `PostcodesClient.layer` with `NodeHttpClient`
 - Scottish, Welsh, and Northern Irish postcodes may return `region: null`
 - Node ≥22 required
+
+## Automation
+
+A [Flue](https://flueframework.com) AI agent runs weekly in GitHub Actions to keep the upstream postcodes.io OpenAPI spec in sync. When the spec changes, it opens a pull request with a detailed summary of what changed and whether `openapi/spec.yaml` needs manual attention. Merging that PR triggers a changesets release PR — approve it to publish to npm.
+
+To trigger the sync manually: **Actions → Sync upstream spec → Run workflow**.
