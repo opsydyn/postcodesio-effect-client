@@ -13,6 +13,7 @@ import {
 	outcodeResponse,
 	placeResponse,
 	randomPostcodeResponse,
+	searchPostcodesResponse,
 } from "./fixtures.ts";
 
 const jsonResponse = (body: unknown, status = 200) =>
@@ -33,6 +34,7 @@ export const startSpikeMockServer = (port = 0) =>
 			),
 		)
 		.post("/postcodes", () => bulkLookupPostcodesResponse)
+		.get("/postcodes", () => searchPostcodesResponse)
 		.get("/random/postcodes", () => randomPostcodeResponse)
 		.get("/outcodes/:outcode", ({ params }) =>
 			Match.value(params.outcode.toUpperCase()).pipe(

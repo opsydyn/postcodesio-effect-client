@@ -35,4 +35,14 @@ describe("postcode operations", () => {
 				expect(postcode.postcode).toBe("SW1A 1AA");
 			}).pipe(Effect.provide(clientLayer(baseUrl))),
 		));
+
+	test("returns matching postcodes for a query", () =>
+		Effect.runPromise(
+			Effect.gen(function* () {
+				const { searchPostcodes } = yield* PostcodesClient;
+				const postcodes = yield* searchPostcodes("SW1A");
+
+				expect(postcodes.map((postcode) => postcode.postcode)).toEqual(["SW1A 1AA"]);
+			}).pipe(Effect.provide(clientLayer(baseUrl))),
+		));
 });

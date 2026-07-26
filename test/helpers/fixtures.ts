@@ -98,6 +98,11 @@ export const randomPostcodeResponse = {
 	result: productionPostcodeResult,
 } satisfies PostcodesProduction.RandomPostcode200;
 
+export const searchPostcodesResponse = {
+	status: 200,
+	result: [productionPostcodeResult],
+} satisfies PostcodesProduction.PostcodeLookup200;
+
 // Scottish postcodes can return a null region — postcodes.io's own published
 // spec declares it non-nullable, but live responses for e.g. EH25 9NJ violate
 // that. See ASSESSMENT.md.

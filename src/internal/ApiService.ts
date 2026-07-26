@@ -77,6 +77,11 @@ export function makeApiServiceFromClient(client: HttpClient.HttpClient, config: 
 				Effect.map((response) => response.result),
 				Effect.mapError((error) => error as ApiServiceError),
 			),
+		searchPostcodes: (query: string) =>
+			production.PostcodeLookup({ params: { query } }).pipe(
+				Effect.map((response) => response.result),
+				Effect.mapError((error) => error as ApiServiceError),
+			),
 	};
 }
 

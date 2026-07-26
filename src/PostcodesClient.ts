@@ -10,7 +10,7 @@ import type {
 	PlaceResult,
 	PostcodeResult,
 } from "../generated/PostcodesApi.ts";
-import type { RandomPostcode200 } from "../generated/PostcodesProduction.ts";
+import type { PostcodeLookup200, RandomPostcode200 } from "../generated/PostcodesProduction.ts";
 import { type ApiConfig, defaultApiConfig } from "./ApiConfig.ts";
 import type { ApiServiceError } from "./Errors.ts";
 import { makeApiService } from "./internal/ApiService.ts";
@@ -26,6 +26,9 @@ export class PostcodesClient extends Context.Service<
 		readonly findOutcode: (outcode: string) => Effect.Effect<OutcodeResult, ApiServiceError>;
 		readonly findPlace: (code: string) => Effect.Effect<PlaceResult, ApiServiceError>;
 		readonly randomPostcode: () => Effect.Effect<RandomPostcode200["result"], ApiServiceError>;
+		readonly searchPostcodes: (
+			query: string,
+		) => Effect.Effect<PostcodeLookup200["result"], ApiServiceError>;
 	}
 >()("@effect-postcodes/client/PostcodesClient") {
 	/** Resolves the service directly — for scripts and top-level programs.
