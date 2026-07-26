@@ -3,7 +3,7 @@ import * as HttpApi from "effect/unstable/httpapi/HttpApi";
 import * as HttpApiEndpoint from "effect/unstable/httpapi/HttpApiEndpoint";
 import * as HttpApiGroup from "effect/unstable/httpapi/HttpApiGroup";
 
-import { BulkLookupRequest } from "../../generated/PostcodesApi.ts";
+import { BulkLookupRequest } from "../../generated/PostcodesProduction.ts";
 import { BulkLookupItem, OutcodeResult, PlaceResult, PostcodeResult } from "../Results.ts";
 
 export class PostcodeNotFound extends Schema.TaggedErrorClass<PostcodeNotFound>()(

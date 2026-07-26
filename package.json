@@ -43,7 +43,7 @@
 		"generate:production": "bun run normalize:production-spec && openapigen --spec openapi/production.bundle.yaml --name PostcodesProduction --format httpclient > generated/PostcodesProduction.ts",
 		"generate:full": "bun run bundle:full-spec && openapigen --spec openapi/full-upstream/openapi.bundle.yaml --name PostcodesFull --format httpclient > generated/PostcodesFull.ts",
 		"typecheck": "tsc --noEmit",
-		"test": "bun test test/contract.test.ts test/fullClient.elysia.test.ts test/rateLimiting.test.ts test/schema.property.test.ts test/publicSchemas.test.ts test/client.property.test.ts test/normalizeProductionSpec.test.ts test/productionGeneration.test.ts test/postcodeOperations.test.ts test/locationOperations.test.ts",
+		"test": "bun test test/contract.test.ts test/fullClient.elysia.test.ts test/rateLimiting.test.ts test/schema.property.test.ts test/publicSchemas.test.ts test/serverOpenApi.test.ts test/client.property.test.ts test/normalizeProductionSpec.test.ts test/productionGeneration.test.ts test/postcodeOperations.test.ts test/locationOperations.test.ts",
 		"test:live": "bun test test/liveClient.test.ts",
 		"check": "bun run typecheck && bun run test",
 		"fmt": "bun node_modules/oxfmt/dist/cli.js --config oxfmt.config.ts",
