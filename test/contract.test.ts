@@ -101,6 +101,7 @@ describe("@effect-postcodes/client contract", () => {
 						bulkLookupPostcodes: (_: readonly string[]) => Effect.succeed([]),
 						findOutcode: (_: string) => Effect.die("not called"),
 						findPlace: (_: string) => Effect.die("not called"),
+						randomPostcode: () => Effect.die("not called"),
 					}),
 				),
 			),

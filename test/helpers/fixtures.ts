@@ -1,5 +1,6 @@
 import type * as PostcodesApi from "../../generated/PostcodesApi.ts";
 import type * as PostcodesFull from "../../generated/PostcodesFull.ts";
+import type * as PostcodesProduction from "../../generated/PostcodesProduction.ts";
 
 export const postcodeResult = {
 	postcode: "SW1A 1AA",
@@ -44,6 +45,58 @@ export const lookupPostcodeResponse = {
 	status: 200,
 	result: postcodeResult,
 } satisfies PostcodesApi.LookupPostcode200;
+
+export const productionPostcodeResult = {
+	...postcodeResult,
+	incode: "1AA",
+	outcode: "SW1A",
+	date_of_introduction: "198001",
+	date_of_termination: null,
+	index_of_multiple_deprivation: 14843,
+	parliamentary_constituency_2024: "Cities of London and Westminster",
+	senedd_constituency: null,
+	senedd_constituency_no: null,
+	nhs_region: "London",
+	ttwa: "London",
+	national_park: "England (non-National Park)",
+	bua: "Westminster",
+	icb: "NHS North West London Integrated Care Board",
+	cancer_alliance: "North West London",
+	lsoa11: "E01004736",
+	msoa11: "E02000977",
+	lsoa21: "E01004736",
+	msoa21: "E02000977",
+	oa21: "E00004185",
+	ruc11: "A1",
+	ruc21: "UN1",
+	lep1: "E37000051",
+	lep2: null,
+	codes: {
+		...postcodeResult.codes,
+		admin_county: "E99999999",
+		parliamentary_constituency_2024: "E14000639",
+		nhs_region: "E40000003",
+		ttwa: "E30000234",
+		national_park: "E65000001",
+		bua: "E63012001",
+		icb: "E54000031",
+		cancer_alliance: "E56000007",
+		lsoa11: "E01004736",
+		msoa11: "E02000977",
+		lsoa21: "E01004736",
+		msoa21: "E02000977",
+		oa21: "E00004185",
+		ruc11: "A1",
+		ruc21: "UN1",
+		lep1: "E37000051",
+		lep2: null,
+	},
+} satisfies PostcodesProduction.RandomPostcode200["result"];
+
+export const randomPostcodeResponse = {
+	status: 200,
+	result: productionPostcodeResult,
+} satisfies PostcodesProduction.RandomPostcode200;
 
 // Scottish postcodes can return a null region — postcodes.io's own published
 // spec declares it non-nullable, but live responses for e.g. EH25 9NJ violate

@@ -4,6 +4,7 @@ import * as HttpClientRequest from "effect/unstable/http/HttpClientRequest";
 import * as RateLimiter from "effect/unstable/persistence/RateLimiter";
 
 import * as Generated from "../../generated/PostcodesApi.ts";
+import * as Production from "../../generated/PostcodesProduction.ts";
 import type { ApiConfig } from "../ApiConfig.ts";
 import { ApiNotFoundError, type ApiServiceError, isGeneratedNotFoundError } from "../Errors.ts";
 import { defaultRateLimit } from "./RateLimiting.ts";
@@ -48,6 +49,7 @@ const encodePathSegment = (value: string): string => encodeURIComponent(value);
 
 export function makeApiServiceFromClient(client: HttpClient.HttpClient, config: ApiConfig) {
 	const generated = Generated.make(configureHttpClient(client, config));
+	const production = Production.make(configureHttpClient(client, config));
 
 	return {
 		lookupPostcode: (postcode: string) =>
@@ -69,6 +71,11 @@ export function makeApiServiceFromClient(client: HttpClient.HttpClient, config: 
 			generated.findPlace(encodePathSegment(code), undefined).pipe(
 				Effect.map((response) => response.result),
 				Effect.mapError(mapGeneratedError("place", code)),
+			),
+		randomPostcode: () =>
+			production.randomPostcode(undefined).pipe(
+				Effect.map((response) => response.result),
+				Effect.mapError((error) => error as ApiServiceError),
 			),
 	};
 }
