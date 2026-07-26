@@ -1,417 +1,74 @@
-# Assessment: `@effect/openapi-generator` against `postcodes.io`
+# Production assessment: `@effect-postcodes/client`
 
-> **Current direction — 2026-07-26:** the generator-assessment phase is complete.
-> This repository now owns the production-bound `@effect-postcodes/client`
-> package. The historical findings below remain useful evidence, but the former
-> no-go recommendation is superseded. Production release remains gated on full
-> endpoint coverage, live contract compatibility, and working release automation.
+> **Current direction — 2026-07-26:** the generator spike is complete. This
+> repository owns the production-bound `@effect-postcodes/client` package.
 
-## Historical scope
+## Decision
 
-This spike assessed `@effect/openapi-generator@4.0.0-beta.50` against a **narrowed subset** of the upstream `postcodes.io` OpenAPI contract.
+Use the generated client as an internal HTTP transport, not as the consumer
+API. `PostcodesClient`, the public runtime schemas, and the typed error union
+are handwritten and exported only through `src/index.ts`.
 
-We intentionally kept the spike small:
+The implementation covers the eleven supported public operations:
 
-- 4 JSON-only endpoints
-- 1 GET example
-- 1 POST example
-- 1 failure-path example
-- 1 small contract/integration test
-- generated code isolated under `generated/`
-- wrapper code isolated under `src/internal/` and `src/PostcodesClient.ts`
+- postcode lookup, text-or-coordinate search, bulk lookup, nearest lookup, and
+  random postcode
+- terminated and Scottish postcode lookup
+- outcode lookup
+- place search, place lookup, and random place
 
-## What we tested
+Bulk lookup validates 1–100 input postcodes. `PostcodeSearch` accepts either a
+text query or a complete latitude/longitude pair, never both. These invalid
+inputs become `ApiValidationError` before transport is invoked.
 
-### Upstream-derived endpoint subset
+## Contract and generation findings
 
-- `GET /postcodes/{postcode}`
-- `POST /postcodes`
-- `GET /outcodes/{outcode}`
-- `GET /places/{code}`
+The immutable vendored upstream tree must be bundled before full generation;
+direct multi-file generation is not a supported path in this repository. The
+production pipeline is:
 
-### Spike deliverables completed
+```text
+pull:full-spec -> bundle:full-spec -> normalize:production-spec -> generate:production
+```
 
-- generation script
-- isolated Bun/TypeScript spike app
-- generated `httpclient` output
-- thin handwritten `ApiService` wrapper
-- config injection through wrapper
-- local contract test
-- runnable GET / POST / failure examples
+`normalize:production-spec` makes explicit, tested compatibility corrections
+to a clone of the bundle. In particular it retains nullable postcode geography
+fields and derives the production bulk-request/response contract. The resulting
+`openapi/production.bundle.yaml` and `generated/PostcodesProduction.ts` are
+generated artefacts and must not be hand-edited.
 
-## What worked well
+The generator is suitable here because its replaceable output is isolated:
 
-### 1. Generated surface is understandable enough
+- handwritten code owns URL configuration, path encoding, input validation,
+  response unwrapping, error mapping, and rate limiting
+- consumer code imports only `@effect-postcodes/client`
+- generated-code lint exceptions remain scoped to generated files
 
-The generated file is large, but not inscrutable.
+There are still upstream-contract caveats. `postcodes.io` has returned nullable
+geography fields that its published schemas did not always model, so the client
+keeps representative local fixtures and an opt-in live compatibility lane.
 
-Useful traits:
+## Release evidence
 
-- schemas are emitted clearly
-- operation names map cleanly from `operationId`
-- success and error response types are explicit
-- the generated `make(httpClient, options)` shape is simple to wrap
+The release gate is deliberately broader than a source test run:
 
-For the narrowed subset, the generated client was understandable after a quick read.
+- deterministic local contracts run against Elysia through `bun test`
+- `bun run test:live` is opt-in network coverage for England (`SW1A 1AA`),
+  Scotland (`EH25 9NJ`), Wales (`CF10 1AA`), and Northern Ireland (`BT1 5GS`)
+- generation verification detects stale generated artefacts
+- package build/lint, API docs, Starlight docs, and a packed-consumer smoke test
+  validate the published boundary
+- CI/release/Changesets target `main`; sync policy prevents full-spec-only
+  refreshes from being released as public API changes
 
-### 2. Base URL injection is clean in a wrapper
+The live lane proves only the representative lookup compatibility above. It is
+not a claim that every upstream response variant has been exercised. Publishing
+remains a separate registry operation after CI and Changesets approval.
 
-This worked well:
+## Historical note
 
-- construct the generated client once
-- inject base URL in the wrapper with:
-  - `HttpClient.mapRequest(...)`
-  - `HttpClientRequest.prependUrl(...)`
-- optionally inject auth headers in the same place
-
-That makes the wrapper the correct seam for:
-
-- base URL
-- auth
-- response unwrapping
-- domain-friendly error mapping
-
-### 3. Non-2xx responses are usable in Effect
-
-For a simple JSON 404 response, the generated client was usable.
-
-Observed behavior:
-
-- the generated client emitted a typed tagged error like `LookupPostcode404`
-- the handwritten wrapper successfully mapped that into a friendlier `ApiNotFoundError`
-- the failure-path example and contract test both passed
-
-So for **single-schema JSON error statuses**, the story is good enough.
-
-### 4. Regeneration churn is contained if you isolate generated code
-
-Generated output lands in one file:
-
-- `gen/generated/PostcodesSpike.ts`
-
-That means churn is noisy, but localized.
-
-This is manageable if you keep these rules:
-
-- never import generated code directly from app code
-- keep handwritten code in a separate wrapper folder
-- treat generated output as replaceable
-
-### 5. Raw generator output is usable if generated-code lint expectations are scoped appropriately
-
-This ended up being the most important conclusion of the spike.
-
-Without the local postprocess step, the generator still emits a client that is
-functionally close to usable for this narrowed subset, but the generated file
-contains patterns that do not meet this repo's default handwritten-code lint rules.
-
-Observed directly in raw generated output:
-
-- `Effect.Effect<any, any>` in the `withResponse` helper
-- `as any` in the optional-response helper
-- `cause: any` in the generated error implementation
-- another final `as any` in the error constructor
-- a `transformClient!` non-null assertion
-
-So the real answer to "what do we get without the script?" is:
-
-- a generated client that basically works for the tiny JSON-only subset
-- a generated file that trips repo lint rules aimed at handwritten code
-- specifically around `any` and non-null assertions in generator-emitted helper code
-
-However, after applying a **file-scoped Biome override** for the generated client
-file, the raw generated output was validated successfully without any
-postprocess script.
-
-Observed final workable setup:
-
-- raw `openapigen` output
-- no source rewriting step
-- targeted Biome override for the generated file only
-  - `suspicious.noExplicitAny: off`
-  - `style.noNonNullAssertion: off`
-- `typecheck` passes
-- spike tests pass
-
-That is a much more conventional arrangement than rewriting generated source.
-The spike conclusion should therefore be based on the raw generator output plus
-a narrowly scoped generated-code lint exemption, not on a postprocess hack.
-
-One small but useful source-level finding from the generator itself: section
-comments like `// non-recursive definitions` are intentionally emitted by
-`JsonSchemaGenerator` as output organization markers. They are generator-owned
-formatting, not something inferred from the spec and not something introduced by
-our local wrapper or Biome configuration.
-
-## What was rough
-
-### 1. Package ergonomics are still beta-grade
-
-This was the sharpest paper cut.
-
-Observed issues:
-
-- npm package page has effectively no README guidance
-- peer/runtime expectations are not obvious from docs
-- the generator required careful version alignment with `effect` and `@effect/platform-node`
-- we had to explicitly install `swagger2openapi` and `yaml` because the generator imports them at runtime
-
-That is workable for a spike, but not yet smooth enough for low-friction adoption.
-
-### 2. Full upstream spec usage is not yet the easy path
-
-The real upstream `postcodes.io` OpenAPI spec is split across many `$ref` files.
-
-For this spike, the fastest path was:
-
-- extract a narrowed subset
-- inline it into a self-contained `spec.yaml`
-
-For a real adoption path, we would likely need one of:
-
-- vendor the full upstream OpenAPI tree locally
-- or prebundle the spec before generation
-
-That is not a blocker, but it is real setup work.
-
-Follow-up result from the exhaustive full-spec pass:
-
-- we successfully vendored the full upstream `openapi/` tree locally
-- the vendored tree contained 33 files
-- generating directly from the multi-file entrypoint produced an effectively
-  empty client surface in this spike
-- bundling the vendored tree into a single self-contained OpenAPI document was
-  required to get a meaningful full generated artifact
-- one upstream schema annotation also needed normalization during bundling:
-  `widesearch` is typed as boolean but used string `default` / `example` values
-
-After bundling and that tiny normalization step, full generation succeeded and
-the complete generated artifact typechecked.
-
-### 3. Upstream generator response-model work is still in flight
-
-Relevant upstream context:
-
-- `#1911` documents JSON-compatible / binary response handling gaps
-- `#1978` documents response representation loss per status
-- `#1979` is the follow-up PR to preserve response representations per status
-
-At assessment time, that PR is still open.
-
-Implication:
-
-- this spike worked for simple postcode-style JSON responses
-- I would still be cautious around specs that use:
-  - multiple JSON media types on one status
-  - `application/problem+json`
-  - mixed representations on the same status
-  - binary success + JSON error combos
-
-## Evaluation questions
-
-### Is the generated client surface understandable?
-
-**Yes, with caveats.**
-
-It is understandable for a small subset, but you do not want app code coupled directly to it.
-The wrapper pattern is not optional; it is what makes the surface pleasant.
-
-### Can config like base URL and auth be injected cleanly?
-
-**Yes.**
-
-This was one of the stronger outcomes of the spike.
-A thin wrapper around the generated `make(...)` API is enough.
-
-### Are non-2xx responses usable in Effect?
-
-**Yes for simple JSON error statuses.**
-
-The 404 flow worked and was easy to map into a domain-specific wrapper error.
-I would still withhold judgment on more complex mixed-representation error cases until `#1979` lands.
-
-### Does regeneration create manageable churn?
-
-**Mostly yes, if isolated.**
-
-The generated file is big, but churn is manageable when:
-
-- generated code is quarantined
-- wrapper code is tiny
-- consumers never import generated modules directly
-
-### Would we trust this for a larger first-party JSON API?
-
-**Not yet as a default.**
-
-The spike shows real promise, but the current beta still asks the adopter to absorb too much friction:
-
-- weak docs
-- runtime packaging rough edges
-- strict version alignment
-- open response-model issues
-
-## Historical recommendation — superseded 2026-07-26
-
-The original assessment recommended continued experimentation rather than
-production adoption. The project has since made an explicit product decision:
-this repository will become the production `@effect-postcodes/client` package.
-
-The earlier generator caveats remain engineering constraints:
-
-- generated code stays replaceable and isolated
-- the public wrapper remains the stable consumer boundary
-- response-representation limitations need focused compatibility fixtures
-- the multi-file upstream spec must be bundled before generation
-- production release requires live compatibility evidence across the UK
-
-## Bottom line
-
-- **Product direction:** production package with full supported endpoint coverage
-- **Architecture:** generated transport behind a stable wrapper and public barrel
-- **Release status:** not yet ready; contract correctness and automation gates remain
-- **Generated output:** usable without source rewriting when generated-code lint exceptions are scoped narrowly
-
-## Evidence from this spike
-
-Validated successfully:
-
-- code generation
-- wrapper-based base URL injection
-- typed GET success path
-- typed POST success path
-- typed 404 failure mapping
-- local contract/integration test
-- runnable examples
-
-Observed in raw generated output without postprocessing:
-
-- two `as any` casts
-- `any`-typed helper signatures
-- `cause: any` in the generated error implementation
-- a non-null assertion in the generated client helper
-
-Validated successfully after replacing source rewriting with a targeted Biome override:
-
-- raw generation with no postprocess script
-- editor diagnostics cleared for the generated file
-- `bun run typecheck`
-- `bun test`
-
-Validated successfully for the exhaustive full upstream pass:
-
-- vendored full upstream `openapi/` tree locally
-- captured a fetch manifest covering 33 files
-- bundled the multi-file upstream spec into `openapi/full-upstream/openapi.bundle.yaml`
-- generated a complete `PostcodesFull.ts` artifact from the bundled spec
-- full artifact typechecked after boolean annotation normalization during bundling
-
-Observed during the exhaustive pass:
-
-- direct generation from the raw multi-file upstream entrypoint produced an
-  effectively empty client in this setup
-- bundling was not optional for a meaningful full artifact here
-
-Observed directly in generator-emitted file structure:
-
-- section headers such as `// non-recursive definitions` come from the generator
-  itself and are part of its normal output layout
-
-The tool is real.
-It is just not yet boring enough, or polished enough out of the box, to trust as the default foundation for this library.
-
-## Update: 2026-06-30 — effect 4.0.0-beta.50 → beta.92
-
-Bumped `effect`, `@effect/platform-node`, and `@effect/openapi-generator` from
-`4.0.0-beta.50` to `4.0.0-beta.92`. Findings:
-
-- clean `bun install`, clean `tsc --noEmit`, all tests passing with no source
-  changes required for compatibility
-- regenerating `generated/PostcodesApi.ts` with the bumped generator
-  produces one cosmetic diff: the generic bound on `decodeSuccess`/`decodeError`
-  narrows from `Schema.Top` to `Schema.Constraint` (generator-side change from
-  beta.86's Schema type-performance work) — not hand-applied, a natural
-  byproduct of `bun run generate`
-- added `RateLimiterLive` (`src/internal/RateLimiting.ts`), built on effect
-  beta.88's `RateLimiterStore` adaptive consume/feedback API plus
-  `HttpClient.withRateLimiter`, so all four client calls now back off
-  automatically on postcodes.io rate-limit responses instead of failing
-  outright
-- fixed a real path-segment-escape bug in `ApiService.ts`: an unencoded `..`
-  in a postcode/outcode/place argument could route a request to an unrelated
-  endpoint (verified: `findOutcode("../places/...")` reached `/places/:code`
-  instead of 404ing); fixed with `encodeURIComponent` on path segments
-- simplified `Errors.ts`'s two `_tag` duck-typing checks to use the existing
-  `effect/Predicate` `isTagged` guard
-
-## Update: 2026-06-30 — live-tested narrowed spec gap: nullable `region`
-
-Live-tested the `src/server/` demo against the real postcodes.io API via its
-Scalar docs UI. Looking up a Scottish postcode (`EH25 9NJ`) failed with
-`SchemaError: Expected string, got null at ["result"]["region"]` — a real
-`postcodes.io` response, not a malformed request.
-
-This is not a transcription error against postcodes.io's own spec: their
-published OpenAPI document declares `region: { type: string }` too (see
-`openapi/full-upstream/components/schemas/Postcode.yaml`), with no
-`nullable: true`. "Region" appears to be an England-specific NHS
-administrative concept; postcodes.io's own documentation doesn't capture that
-it returns `null` for Scottish (and likely Welsh/Northern Irish) postcodes.
-
-Fixed in our narrowed spec: `openapi/spec.yaml`'s `PostcodeResult.region` is
-now `type: [string, 'null']`, matching the pattern already used for
-`parish`/`admin_county`/`ced`. Regenerated, added a regression test
-(`test/contract.test.ts`: "decodes a null region for Scottish postcodes",
-backed by a mock fixture in `test/helpers/fixtures.ts`), and verified against
-the live API. Not fixed upstream — `openapi/full-upstream/` mirrors
-postcodes.io's actual published spec, so changing it there would
-misrepresent what they publish, even though it's also wrong in practice.
-
-## Update: 2026-06-30 — synced vendored full upstream spec
-
-`openapi/full-upstream/` was badly stale: postcodes.io's own `info.version`
-jumped `3.5.1` → `18.0.0` on re-pull (`bun run generate:full`). Notable
-changes that flowed into `generated/PostcodesFull.ts`:
-
-- `Postcode.yaml` gained new fields (`date_of_termination`,
-  `index_of_multiple_deprivation`, `senedd_constituency`,
-  `senedd_constituency_no`) and promoted ~17 previously-optional fields
-  (`pfa`, `nhs_region`, `ttwa`, `lep1`/`lep2`, etc.) to `required`
-- confirmed the `region: string` non-nullable gap from the entry above is
-  still present in postcodes.io's published spec at v18.0.0 — not something
-  they've since fixed upstream
-- `TerminatedPostcode.yaml`'s `eastings`/`northings`/`longitude`/`latitude`
-  are now correctly nullable
-- `ScottishPostcodeResponse.yaml` and `TerminatedPostcodeResponse.yaml`: a
-  real shape correction — `result` was documented as an array, is now
-  correctly a single object
-- `ScottishPostcodes.yaml` went from a 27-line stub to a fully-documented
-  Scottish Postcode Directory model (~50 fields)
-
-Regenerated `generated/PostcodesFull.ts` against the refreshed bundle: clean
-`tsc --noEmit`, all tests still pass. This did not update the transitional
-four-endpoint public client, which uses `generated/PostcodesApi.ts` through
-`src/internal/ApiService.ts` and `src/PostcodesClient.ts`.
-
-## Update: 2026-07-26 — production direction and current contract gap
-
-The project has moved beyond assessment and now targets a production package
-covering the full supported `postcodes.io` endpoint set.
-
-Fresh verification established:
-
-- the current upstream 33-file spec fetch and bundle match the vendored copy
-- narrowed and full generated artefacts reproduce deterministically
-- local typecheck and all 14 tests pass
-- package build, package lint, documentation build, and an isolated Node
-  consumer smoke test pass
-- a live Northern Irish lookup for `BT1 5GS` fails in the transitional public
-  client because `openapi/spec.yaml` requires `msoa: string` while the API and
-  current full upstream schema allow `null`
-- CI, release, and Changesets target `master` while the repository default
-  branch is `main`
-
-These findings define the production cutover work: derive the public contract
-from the bundled full upstream schema, cover representative UK live responses,
-expand the stable wrapper across the full endpoint set, and repair the release
-gates before publishing.
+This repository began as an `@effect/openapi-generator` assessment against a
+narrowed four-endpoint contract. Its central conclusion remains: generated
+transport is useful, but it should not define consumer compatibility. The
+production package therefore preserves a small handwritten boundary and keeps
+the generator output replaceable.

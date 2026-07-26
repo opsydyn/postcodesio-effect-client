@@ -1,55 +1,44 @@
 ---
 title: Error types
-description: All possible errors from ApiServiceError.
+description: Errors returned by PostcodesClient methods.
 ---
 
 All service methods return `Effect<Result, ApiServiceError>` where:
 
-```typescript
+```ts
 type ApiServiceError =
-  | ApiNotFoundError      // typed 404
-  | HttpClientError       // network / transport failure
-  | SchemaError           // unexpected response shape
-  | RateLimiterError      // rate limiter store error
+  | ApiNotFoundError
+  | ApiValidationError
+  | HttpClientError
+  | SchemaError
+  | RateLimiterError
 ```
 
-## `ApiNotFoundError`
+## Client-owned errors
 
-The postcode, outcode, or place code was not found.
+`ApiNotFoundError` represents a missing postcode, terminated postcode, Scottish
+postcode, outcode, or place. It has `resource`, `identifier`, `message`, and a
+404-shaped `cause`. Narrow it with `isApiNotFoundError`.
 
-```typescript
-interface ApiNotFoundError {
-  readonly _tag: "ApiNotFoundError"
-  readonly resource: string       // "postcode" | "outcode" | "place"
-  readonly identifier: string     // the value that was not found
-  readonly message: string
-  readonly cause: ErrorEnvelope   // { status: 404, error: string }
-}
+`ApiValidationError` represents invalid client input before a request is made.
+It has `field` and `message`; for example, bulk lookup must receive 1–100
+postcodes and postcode search must use exactly one of text search or complete
+coordinates. Narrow it with `isApiValidationError`.
+
+```ts
+import { Effect } from "effect";
+import { isApiValidationError } from "@effect-postcodes/client";
+
+const result = yield* client.bulkLookupPostcodes([]).pipe(
+	Effect.catchIf(isApiValidationError, (error) => Effect.fail(error.message)),
+);
 ```
 
-Catch with the exported `isApiNotFoundError` guard:
+## Effect runtime errors
 
-```typescript
-import { isApiNotFoundError } from "@effect-postcodes/client"
+`HttpClientError` covers network and transport failures. `SchemaError` means an
+upstream response did not match the expected runtime schema. `RateLimiterError`
+can surface when a supplied rate-limiter store fails.
 
-yield* lookupPostcode("ZZ99ZZ").pipe(
-  Effect.catchIf(isApiNotFoundError, (err) =>
-    Effect.succeed(`${err.resource} not found: ${err.identifier}`)
-  )
-)
-```
-
-## `HttpClientError`
-
-Network or transport failure from `effect/unstable/http/HttpClientError`.
-Catch with `HttpClientError.isHttpClientError` from that module.
-
-## `SchemaError`
-
-The postcodes.io API returned a shape that does not match the expected schema.
-This is rare in production but can indicate a breaking API change upstream.
-
-## `RateLimiterError`
-
-The rate limiter store returned an error. Only surfaces if you replace `.Default`
-with a custom `RateLimiterStore` that can fail.
+Use the guards and error types exported by Effect's corresponding modules when
+you need to handle those cases explicitly.

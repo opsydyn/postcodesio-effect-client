@@ -1,13 +1,32 @@
 ---
 title: "@effect-postcodes/client"
-description: Effect-native TypeScript client for the postcodes.io API.
+description: Production Effect-native TypeScript client for the postcodes.io API.
 ---
 
 import { LinkCard, CardGrid } from '@astrojs/starlight/components'
 
-Effect-native TypeScript client for the [postcodes.io](https://postcodes.io) API.
-Adaptive rate limiting, typed errors, and full [Effect](https://effect.website) layer
-composition built in.
+`@effect-postcodes/client` is the production Effect-native client for
+[postcodes.io](https://postcodes.io). It provides one stable `PostcodesClient`
+service for the complete postcode and place endpoint surface; generated OpenAPI
+transport stays internal.
+
+```bash
+npm install @effect-postcodes/client effect
+```
+
+The service supports postcode lookup, text-or-coordinate postcode search,
+1–100-item bulk lookup, nearest and random postcodes, terminated and Scottish
+postcode lookup, outcode lookup, and place search, lookup, and random place.
+
+`searchPostcodes` accepts either `{ query }` or a complete
+`{ latitude, longitude }` pair. Invalid mixed/incomplete searches and invalid
+bulk sizes fail with the exported `ApiValidationError`; not-found resources use
+`ApiNotFoundError`. All methods otherwise expose Effect HTTP, schema, and rate
+limiter failures through `ApiServiceError`.
+
+The package exports runtime schemas and inferred types for postcode, bulk,
+nearest, terminated, Scottish, outcode, and place results. Import those and the
+service from `@effect-postcodes/client`, never from the generated transport.
 
 <CardGrid>
   <LinkCard
@@ -18,16 +37,20 @@ composition built in.
   <LinkCard
     title="How-to guides"
     href="/guides/use-with-nodejs"
-    description="Step-by-step for specific tasks: Node.js, Scottish postcodes, rate limiting, testing."
+    description="Use Node.js, handle UK geography, configure rate limiting, and test clients."
   />
   <LinkCard
     title="Reference"
     href="/reference/api"
-    description="API signatures, error types, and configuration fields."
+    description="All 11 methods, runtime schemas, typed errors, and configuration."
   />
   <LinkCard
     title="Explanation"
     href="/explanation/effect-layers-model"
-    description="Why Effect layers, why three entry points, what Context.Service gives you."
+    description="Why the package exposes an Effect service over generated transport."
   />
 </CardGrid>
+
+Default tests are local and deterministic. `bun run test:live` is a separate,
+networked compatibility check for representative English, Scottish, Welsh, and
+Northern Irish postcodes.

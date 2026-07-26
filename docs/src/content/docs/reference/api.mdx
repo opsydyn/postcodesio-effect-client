@@ -1,38 +1,62 @@
 ---
 title: API reference
-description: Full method signatures for PostcodesClient.
+description: Public method signatures for PostcodesClient.
 ---
 
 ## `PostcodesClient`
 
-A `Context.Service` providing four methods for the postcodes.io API.
-
-### Methods
+`PostcodesClient` is a `Context.Service` covering the supported
+postcodes.io postcode and place operations. Every method returns
+`Effect<Success, ApiServiceError>`.
 
 | Method | Parameters | Returns |
-|--------|-----------|---------|
-| `lookupPostcode` | `postcode: string` | `Effect<PostcodeResult, ApiServiceError>` |
-| `bulkLookupPostcodes` | `postcodes: readonly string[]` | `Effect<readonly BulkLookupItem[], ApiServiceError>` |
-| `findOutcode` | `outcode: string` | `Effect<OutcodeResult, ApiServiceError>` |
-| `findPlace` | `code: string` — OS Open Names ID | `Effect<PlaceResult, ApiServiceError>` |
+| --- | --- | --- |
+| `lookupPostcode` | `postcode: string` | `PostcodeResult` |
+| `searchPostcodes` | `search: PostcodeSearch` | `readonly PostcodeResult[]` |
+| `bulkLookupPostcodes` | `postcodes: readonly string[]` | `readonly BulkLookupItem[]` |
+| `findNearestPostcodes` | `postcode: string` | `readonly NearestPostcode[]` |
+| `randomPostcode` | none | `PostcodeResult` |
+| `lookupTerminatedPostcode` | `postcode: string` | `TerminatedPostcode` |
+| `lookupScottishPostcode` | `postcode: string` | `ScottishPostcode` |
+| `findOutcode` | `outcode: string` | `OutcodeResult` |
+| `searchPlaces` | `query: string` | `readonly PlaceResult[]` |
+| `findPlace` | `code: string` (OS Open Names ID) | `PlaceResult` |
+| `randomPlace` | none | `PlaceResult` |
+
+`PostcodeSearch` has two valid shapes:
+
+```ts
+{ query: "SW1A" }
+{ latitude: 51.501, longitude: -0.142 }
+```
+
+Do not mix the modes or omit one coordinate. Bulk lookup accepts 1–100
+postcodes. Those validation failures return `ApiValidationError` before a
+request is made.
 
 ### Static members
 
 | Member | Type | Description |
-|--------|------|-------------|
-| `.Default` | `Layer<PostcodesClient>` | Pre-wired: FetchHttpClient + in-memory rate limiter |
-| `.layer(config?)` | `(config?: ApiConfig) => Layer<PostcodesClient, never, HttpClient>` | Bundles rate limiter; requires you to provide an HttpClient |
-| `.make(config?)` | `(config?: ApiConfig) => Effect<PostcodesClient.Service>` | Resolves the service directly — for scripts and top-level programs |
+| --- | --- | --- |
+| `.Default` | `Layer<PostcodesClient>` | Fetch HTTP client and in-memory rate limiter. |
+| `.layer(config?)` | `Layer<PostcodesClient, never, HttpClient>` | Requires a caller-provided HTTP client. |
+| `.make(config?)` | `Effect<PostcodesClient.Service>` | Direct service construction for scripts and top-level programs. |
 
-## Domain types
+## Runtime schemas and types
 
-Imported from `@effect-postcodes/client`:
+Import the public schemas and inferred types from `@effect-postcodes/client`:
 
-- `PostcodeResult` — single postcode lookup result; `region` is `string | null`
-- `OutcodeResult` — outward code data
-- `PlaceResult` — OS Open Names place record; place codes are opaque IDs like `osgb4000000074564391`
-- `BulkLookupItem` — `{ query: string; result: PostcodeResult | null }` — `result` is null for unknown postcodes
-- `ErrorEnvelope` — `{ status: 404; error: string }` — raw postcodes.io error body
+- `PostcodeResult`
+- `BulkLookupItem`
+- `NearestPostcode`
+- `TerminatedPostcode`
+- `ScottishPostcode`
+- `OutcodeResult`
+- `PlaceResult`
+
+`BulkLookupItem.result` is `null` when a requested postcode is unknown. Do not
+import the generated transport schemas: they are implementation artefacts and
+may change on regeneration.
 
 ## Full TypeDoc
 
