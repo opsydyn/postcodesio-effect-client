@@ -11,6 +11,10 @@
 	],
 	"license": "MIT",
 	"author": "Alan Currie",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/opsydyn/postcodesio-effect-client"
+	},
 	"files": [
 		"dist",
 		"README.md",

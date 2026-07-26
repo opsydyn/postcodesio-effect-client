@@ -5,5 +5,9 @@ test("publishes under the Opsydyn npm scope", async () => {
 	const changelog = await Bun.file(new URL("../CHANGELOG.md", import.meta.url)).text();
 
 	expect(packageJson.name).toBe("@opsydyn/effect-postcodes-client");
+	expect(packageJson.repository).toEqual({
+		type: "git",
+		url: "https://github.com/opsydyn/postcodesio-effect-client",
+	});
 	expect(changelog).toStartWith("# @opsydyn/effect-postcodes-client");
 });
