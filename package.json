@@ -1,6 +1,6 @@
 {
 	"name": "@effect-postcodes/client",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "Effect-native TypeScript client for the postcodes.io API",
 	"keywords": [
 		"effect",
