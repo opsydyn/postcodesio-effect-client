@@ -1,4 +1,4 @@
-import { Effect, Match } from "effect";
+import { Effect, Match, Predicate, Result } from "effect";
 import * as HttpClient from "effect/unstable/http/HttpClient";
 import * as HttpClientRequest from "effect/unstable/http/HttpClientRequest";
 import * as RateLimiter from "effect/unstable/persistence/RateLimiter";
@@ -6,7 +6,13 @@ import * as RateLimiter from "effect/unstable/persistence/RateLimiter";
 import * as Generated from "../../generated/PostcodesApi.ts";
 import * as Production from "../../generated/PostcodesProduction.ts";
 import type { ApiConfig } from "../ApiConfig.ts";
-import { ApiNotFoundError, type ApiServiceError, isGeneratedNotFoundError } from "../Errors.ts";
+import {
+	ApiNotFoundError,
+	ApiValidationError,
+	type ApiServiceError,
+	type ApiValidationError as ApiValidationErrorType,
+	isGeneratedNotFoundError,
+} from "../Errors.ts";
 import { defaultRateLimit } from "./RateLimiting.ts";
 
 const configureHttpClient = (
@@ -47,6 +53,34 @@ const mapGeneratedError =
 
 const encodePathSegment = (value: string): string => encodeURIComponent(value);
 
+const minimumBulkPostcodeCount = 1;
+const maximumBulkPostcodeCount = 100;
+
+const validateBulkPostcodeCount = (
+	postcodes: ReadonlyArray<string>,
+): Result.Result<ReadonlyArray<string>, ApiValidationErrorType> =>
+	Match.value(postcodes.length).pipe(
+		Match.when(0, () =>
+			Result.fail(
+				ApiValidationError(
+					"postcodes",
+					`Expected between ${minimumBulkPostcodeCount} and ${maximumBulkPostcodeCount} postcodes`,
+				),
+			),
+		),
+		Match.when(
+			(length) => length > maximumBulkPostcodeCount,
+			() =>
+				Result.fail(
+					ApiValidationError(
+						"postcodes",
+						`Expected between ${minimumBulkPostcodeCount} and ${maximumBulkPostcodeCount} postcodes`,
+					),
+				),
+		),
+		Match.orElse(() => Result.succeed(postcodes)),
+	);
+
 export function makeApiServiceFromClient(client: HttpClient.HttpClient, config: ApiConfig) {
 	const generated = Generated.make(configureHttpClient(client, config));
 	const production = Production.make(configureHttpClient(client, config));
@@ -58,7 +92,10 @@ export function makeApiServiceFromClient(client: HttpClient.HttpClient, config: 
 				Effect.mapError(mapGeneratedError("postcode", postcode)),
 			),
 		bulkLookupPostcodes: (postcodes: ReadonlyArray<string>) =>
-			production.BulkPostcodeLookup({ payload: { postcodes } }).pipe(
+			Effect.fromResult(validateBulkPostcodeCount(postcodes)).pipe(
+				Effect.flatMap((validatedPostcodes) =>
+					production.BulkPostcodeLookup({ payload: { postcodes: validatedPostcodes } }),
+				),
 				Effect.map((response) => response.result),
 				Effect.mapError((error) => error as ApiServiceError),
 			),
@@ -94,6 +131,28 @@ export function makeApiServiceFromClient(client: HttpClient.HttpClient, config: 
 			),
 		randomPlace: () =>
 			production.randomPlace(undefined).pipe(
+				Effect.map((response) => response.result),
+				Effect.mapError((error) => error as ApiServiceError),
+			),
+		lookupTerminatedPostcode: (postcode: string) =>
+			production.LookupTerminatedPostcode(encodePathSegment(postcode), undefined).pipe(
+				Effect.filterOrFail(Predicate.isNotUndefined, () =>
+					ApiNotFoundError("terminated postcode", postcode, {
+						status: 404,
+						error: "Terminated postcode not found",
+					}),
+				),
+				Effect.map((response) => response.result),
+				Effect.mapError((error) => error as ApiServiceError),
+			),
+		lookupScottishPostcode: (postcode: string) =>
+			production.getScottishPostcode(encodePathSegment(postcode), undefined).pipe(
+				Effect.filterOrFail(Predicate.isNotUndefined, () =>
+					ApiNotFoundError("Scottish postcode", postcode, {
+						status: 404,
+						error: "Scottish postcode not found",
+					}),
+				),
 				Effect.map((response) => response.result),
 				Effect.mapError((error) => error as ApiServiceError),
 			),

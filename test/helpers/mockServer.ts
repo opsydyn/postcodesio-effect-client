@@ -16,6 +16,8 @@ import {
 	randomPostcodeResponse,
 	searchPostcodesResponse,
 	searchPlacesResponse,
+	scottishPostcodeDirectoryResponse,
+	terminatedPostcodeResponse,
 } from "./fixtures.ts";
 
 const jsonResponse = (body: unknown, status = 200) =>
@@ -39,6 +41,18 @@ export const startSpikeMockServer = (port = 0) =>
 		.post("/postcodes", () => productionBulkLookupPostcodesResponse)
 		.get("/postcodes", () => searchPostcodesResponse)
 		.get("/random/postcodes", () => randomPostcodeResponse)
+		.get("/terminated_postcodes/:postcode", ({ params }) =>
+			Match.value(params.postcode.replaceAll(" ", "").toUpperCase()).pipe(
+				Match.when("BS405AF", () => terminatedPostcodeResponse),
+				Match.orElse(() => jsonResponse(lookupPostcodeNotFoundResponse, 404)),
+			),
+		)
+		.get("/scotland/postcodes/:postcode", ({ params }) =>
+			Match.value(params.postcode.replaceAll(" ", "").toUpperCase()).pipe(
+				Match.when("EH259NJ", () => scottishPostcodeDirectoryResponse),
+				Match.orElse(() => jsonResponse(lookupPostcodeNotFoundResponse, 404)),
+			),
+		)
 		.get("/places", () => searchPlacesResponse)
 		.get("/outcodes/:outcode", ({ params }) =>
 			Match.value(params.outcode.toUpperCase()).pipe(

@@ -6,8 +6,10 @@ import type * as HttpClient from "effect/unstable/http/HttpClient";
 
 import type { OutcodeResult, PlaceResult, PostcodeResult } from "../generated/PostcodesApi.ts";
 import type {
-	NearestPostcode200,
 	BulkPostcodeLookup200,
+	GetScottishPostcode200,
+	LookupTerminatedPostcode200,
+	NearestPostcode200,
 	PlaceQuery200,
 	RandomPlace200,
 	PostcodeLookup200,
@@ -38,6 +40,12 @@ export class PostcodesClient extends Context.Service<
 			query: string,
 		) => Effect.Effect<PlaceQuery200["result"], ApiServiceError>;
 		readonly randomPlace: () => Effect.Effect<RandomPlace200["result"], ApiServiceError>;
+		readonly lookupTerminatedPostcode: (
+			postcode: string,
+		) => Effect.Effect<LookupTerminatedPostcode200["result"], ApiServiceError>;
+		readonly lookupScottishPostcode: (
+			postcode: string,
+		) => Effect.Effect<GetScottishPostcode200["result"], ApiServiceError>;
 	}
 >()("@effect-postcodes/client/PostcodesClient") {
 	/** Resolves the service directly — for scripts and top-level programs.

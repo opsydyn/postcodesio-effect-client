@@ -111,6 +111,37 @@ export const productionBulkLookupPostcodesResponse = {
 	],
 } satisfies PostcodesProduction.BulkPostcodeLookup200;
 
+export const terminatedPostcodeResponse = {
+	status: 200,
+	result: {
+		postcode: "BS40 5AF",
+		year_terminated: 2016,
+		month_terminated: 1,
+		eastings: 344560,
+		northings: 157390,
+		longitude: -2.7901,
+		latitude: 51.6164,
+	},
+} satisfies PostcodesProduction.LookupTerminatedPostcode200;
+
+export const scottishPostcodeDirectoryResponse = {
+	status: 200,
+	result: {
+		postcode: "EH25 9NJ",
+		longitude: -3.1717,
+		latitude: 55.8644,
+		council_area: "Midlothian",
+		electoral_ward: "Bonnyrigg",
+		scottish_parliamentary_region: "Lothian",
+		scottish_parliamentary_constituency: "Midlothian North and Musselburgh",
+		health_board_area: "NHS Lothian",
+		output_area: "S00112345",
+		data_zone: "S01012345",
+		intermediate_zone: "S02001234",
+		codes: {},
+	},
+} satisfies PostcodesProduction.GetScottishPostcode200;
+
 export const nearestPostcodesResponse = {
 	status: 200,
 	result: [{ ...productionPostcodeResult, distance: 0 }],

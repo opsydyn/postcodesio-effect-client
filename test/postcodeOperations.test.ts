@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { Effect, Layer } from "effect";
 import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient";
 
-import { PostcodesClient } from "../src/index.ts";
+import { isApiNotFoundError, isApiValidationError, PostcodesClient } from "../src/index.ts";
 import {
 	getSpikeMockServerBaseUrl,
 	startSpikeMockServer,
@@ -53,6 +53,58 @@ describe("postcode operations", () => {
 				const postcodes = yield* findNearestPostcodes("SW1A 1AA");
 
 				expect(postcodes[0]?.distance).toBe(0);
+			}).pipe(Effect.provide(clientLayer(baseUrl))),
+		));
+
+	test("returns an unwrapped terminated postcode", () =>
+		Effect.runPromise(
+			Effect.gen(function* () {
+				const { lookupTerminatedPostcode } = yield* PostcodesClient;
+				const postcode = yield* lookupTerminatedPostcode("BS40 5AF");
+
+				expect(postcode.year_terminated).toBe(2016);
+			}).pipe(Effect.provide(clientLayer(baseUrl))),
+		));
+
+	test("returns Scottish Postcode Directory data", () =>
+		Effect.runPromise(
+			Effect.gen(function* () {
+				const { lookupScottishPostcode } = yield* PostcodesClient;
+				const postcode = yield* lookupScottishPostcode("EH25 9NJ");
+
+				expect(postcode.council_area).toBe("Midlothian");
+			}).pipe(Effect.provide(clientLayer(baseUrl))),
+		));
+
+	test("maps missing specialised postcode records to ApiNotFoundError", () =>
+		Effect.runPromise(
+			Effect.gen(function* () {
+				const { lookupScottishPostcode, lookupTerminatedPostcode } = yield* PostcodesClient;
+				const terminatedError = yield* lookupTerminatedPostcode("ZZ99 9ZZ").pipe(
+					Effect.match({ onFailure: (error) => error, onSuccess: () => undefined }),
+				);
+				const scottishError = yield* lookupScottishPostcode("ZZ99 9ZZ").pipe(
+					Effect.match({ onFailure: (error) => error, onSuccess: () => undefined }),
+				);
+
+				expect(isApiNotFoundError(terminatedError)).toBe(true);
+				expect(isApiNotFoundError(scottishError)).toBe(true);
+			}).pipe(Effect.provide(clientLayer(baseUrl))),
+		));
+
+	test("rejects bulk lookup input outside the supported 1–100 range", () =>
+		Effect.runPromise(
+			Effect.gen(function* () {
+				const { bulkLookupPostcodes } = yield* PostcodesClient;
+				const emptyError = yield* bulkLookupPostcodes([]).pipe(
+					Effect.match({ onFailure: (error) => error, onSuccess: () => undefined }),
+				);
+				const oversizedError = yield* bulkLookupPostcodes(
+					Array.from({ length: 101 }, () => "SW1A 1AA"),
+				).pipe(Effect.match({ onFailure: (error) => error, onSuccess: () => undefined }));
+
+				expect(isApiValidationError(emptyError)).toBe(true);
+				expect(isApiValidationError(oversizedError)).toBe(true);
 			}).pipe(Effect.provide(clientLayer(baseUrl))),
 		));
 });

@@ -106,6 +106,8 @@ describe("@effect-postcodes/client contract", () => {
 						findNearestPostcodes: (_: string) => Effect.die("not called"),
 						searchPlaces: (_: string) => Effect.die("not called"),
 						randomPlace: () => Effect.die("not called"),
+						lookupTerminatedPostcode: (_: string) => Effect.die("not called"),
+						lookupScottishPostcode: (_: string) => Effect.die("not called"),
 					}),
 				),
 			),

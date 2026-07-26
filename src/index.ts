@@ -7,7 +7,12 @@ export { defaultApiConfig, makeApiConfig } from "./ApiConfig.ts";
 
 // Error types
 export type { ApiServiceError } from "./Errors.ts";
-export { ApiNotFoundError, isApiNotFoundError } from "./Errors.ts";
+export {
+	ApiNotFoundError,
+	ApiValidationError,
+	isApiNotFoundError,
+	isApiValidationError,
+} from "./Errors.ts";
 
 // Domain schemas — exported as values (Schema.Struct instances) so consumers
 // can use Schema.toArbitrary, Schema.decodeUnknown etc. directly.
@@ -19,3 +24,8 @@ export {
 	PlaceResult,
 	PostcodeResult,
 } from "../generated/PostcodesApi.ts";
+
+export {
+	GetScottishPostcode200,
+	LookupTerminatedPostcode200,
+} from "../generated/PostcodesProduction.ts";
