@@ -1,8 +1,10 @@
 import { defineTool } from "@flue/runtime";
-import { execSync, spawnSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import * as v from "valibot";
+
+import { classifySpecSyncChanges } from "../../scripts/specSyncPolicy.ts";
 
 const repoRoot = process.cwd();
 
@@ -40,29 +42,30 @@ export const runScript = defineTool({
 export const checkForChanges = defineTool({
 	name: "check_for_changes",
 	description:
-		"Check whether the upstream spec files or generated client changed compared to the last git commit. Returns a list of changed files.",
+		"Classify changes compared to the last git commit. Full-spec-only artefacts do not require a package release; public-contract changes do.",
 	output: v.object({
 		hasChanges: v.boolean(),
 		changedFiles: v.array(v.string()),
+		changeKind: v.picklist(["no-changes", "full-spec-only", "public-contract"]),
+		requiresPackageRelease: v.boolean(),
 	}),
 	async run() {
-		// After bundle:full-spec these files may be modified but not yet staged.
 		const result = spawnSync(
 			"git",
-			[
-				"diff",
-				"--name-only",
-				"--",
-				"openapi/full-upstream/",
-				"generated/PostcodesFull.ts",
-			],
+			["diff", "--name-only", "HEAD", "--"],
 			{ cwd: repoRoot, encoding: "utf-8" },
 		);
 		const changedFiles = (result.stdout ?? "")
 			.split("\n")
 			.map((l) => l.trim())
 			.filter(Boolean);
-		return { hasChanges: changedFiles.length > 0, changedFiles };
+		const policy = classifySpecSyncChanges(changedFiles);
+		return {
+			hasChanges: changedFiles.length > 0,
+			changedFiles,
+			changeKind: policy.kind,
+			requiresPackageRelease: policy.requiresPackageRelease,
+		};
 	},
 });
 
@@ -93,6 +96,7 @@ export const submitSyncPR = defineTool({
 	description:
 		"Create a git branch, write a changeset file, commit all upstream-sync changes, push, and open a GitHub pull request. Only call this after the spec has changed and all checks pass.",
 	input: v.object({
+		requiresPackageRelease: v.boolean(),
 		bumpType: v.picklist(
 			["patch", "minor", "major"],
 			"Semver bump: patch for doc/minor fixes, minor for new endpoints or non-breaking additions, major for breaking schema changes",
@@ -115,32 +119,52 @@ export const submitSyncPR = defineTool({
 			.slice(0, 16); // YYYY-MM-DDTHH-mm
 		const branch = `spec-sync/${ts}`;
 
-		execSync(`git checkout -b ${branch}`, { cwd: repoRoot, stdio: "pipe" });
+		execFileSync("git", ["checkout", "-b", branch], { cwd: repoRoot, stdio: "pipe" });
 
-		// Write changeset
-		mkdirSync(join(repoRoot, ".changeset"), { recursive: true });
-		writeFileSync(
-			join(repoRoot, ".changeset", `spec-sync-${ts}.md`),
-			`---\n"@effect-postcodes/client": ${input.bumpType}\n---\n\n${input.changesetSummary}\n`,
-			"utf-8",
-		);
+		if (input.requiresPackageRelease) {
+			mkdirSync(join(repoRoot, ".changeset"), { recursive: true });
+			writeFileSync(
+				join(repoRoot, ".changeset", `spec-sync-${ts}.md`),
+				`---\n"@effect-postcodes/client": ${input.bumpType}\n---\n\n${input.changesetSummary}\n`,
+				"utf-8",
+			);
+		}
 
-		execSync(
-			"git add openapi/full-upstream/ generated/PostcodesFull.ts .changeset/",
+		execFileSync(
+			"git",
+			[
+				"add",
+				"openapi/full-upstream/",
+				"openapi/production.bundle.yaml",
+				"generated/PostcodesFull.ts",
+				"generated/PostcodesProduction.ts",
+				".changeset/",
+			],
 			{ cwd: repoRoot, stdio: "pipe" },
 		);
-		execSync(
-			`git commit -m "chore: sync upstream postcodes.io spec (${ts})"`,
-			{ cwd: repoRoot, stdio: "pipe" },
-		);
-		execSync(`git push -u origin ${branch}`, {
+		execFileSync("git", ["commit", "-m", `chore: sync upstream postcodes.io spec (${ts})`], {
+			cwd: repoRoot,
+			stdio: "pipe",
+		});
+		execFileSync("git", ["push", "-u", "origin", branch], {
 			cwd: repoRoot,
 			stdio: "pipe",
 		});
 
 		const pr = spawnSync(
 			"gh",
-			["pr", "create", "--title", input.prTitle, "--body", input.prBody, "--head", branch],
+			[
+				"pr",
+				"create",
+				"--base",
+				"main",
+				"--title",
+				input.prTitle,
+				"--body",
+				input.prBody,
+				"--head",
+				branch,
+			],
 			{ cwd: repoRoot, encoding: "utf-8" },
 		);
 		if (pr.status !== 0) {
