@@ -70,6 +70,17 @@ const requireOperation = (paths: OpenApiObject, path: string, method: string): O
 	return requireObject(pathItem[method], `paths.${path}.${method}`);
 };
 
+const requireSuccessSchema = (operation: OpenApiObject, context: string): OpenApiObject => {
+	const responses = requireObject(operation.responses, `${context}.responses`);
+	const success = requireObject(responses["200"], `${context}.responses.200`);
+	const content = requireObject(success.content, `${context}.responses.200.content`);
+	const json = requireObject(
+		content["application/json"],
+		`${context}.responses.200.content.application/json`,
+	);
+	return requireObject(json.schema, `${context}.responses.200.content.application/json.schema`);
+};
+
 const bulkLookupRequest = {
 	type: "object",
 	required: ["postcodes"],
@@ -106,6 +117,7 @@ export const normalizeProductionSpec = (document: unknown): ProductionSpec => {
 	const schemas = requireObject(components.schemas ?? {}, "components.schemas");
 	const bulkLookup = requireOperation(paths, "/postcodes", "post");
 	const placeQuery = requireOperation(paths, "/places", "get");
+	const postcodeLookup = requireOperation(paths, "/postcodes/{postcode}", "get");
 
 	if (bulkLookup.requestBody === undefined) {
 		bulkLookup.requestBody = bulkLookupRequestBody;
@@ -114,6 +126,32 @@ export const normalizeProductionSpec = (document: unknown): ProductionSpec => {
 	if (schemas.BulkLookupRequest === undefined) {
 		schemas.BulkLookupRequest = bulkLookupRequest;
 	}
+
+	const postcodeProperties = requireObject(
+		requireSuccessSchema(postcodeLookup, "paths./postcodes/{postcode}.get").properties,
+		"paths./postcodes/{postcode}.get.responses.200.content.application/json.schema.properties",
+	);
+	const postcodeResult = requireObject(
+		postcodeProperties.result,
+		"paths./postcodes/{postcode}.get.responses.200.content.application/json.schema.properties.result",
+	);
+	const bulkProperties = requireObject(
+		requireSuccessSchema(bulkLookup, "paths./postcodes.post").properties,
+		"paths./postcodes.post.responses.200.content.application/json.schema.properties",
+	);
+	bulkProperties.result = {
+		type: "array",
+		items: {
+			type: "object",
+			required: ["query", "result"],
+			properties: {
+				query: { type: "string" },
+				result: {
+					oneOf: [postcodeResult, { type: "null" }],
+				},
+			},
+		},
+	};
 
 	const parameters = Array.isArray(placeQuery.parameters) ? placeQuery.parameters : [];
 	const hasQueryParameter = parameters.some(

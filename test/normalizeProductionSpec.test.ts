@@ -8,10 +8,38 @@ import {
 const fixture: ProductionSpec = {
 	openapi: "3.1.0",
 	paths: {
+		"/postcodes/{postcode}": {
+			get: {
+				responses: {
+					"200": {
+						content: {
+							"application/json": {
+								schema: {
+									properties: {
+										result: {
+											type: "object",
+											properties: { postcode: { type: "string" } },
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 		"/postcodes": {
 			post: {
 				responses: {
-					"200": { description: "Success" },
+					"200": {
+						content: {
+							"application/json": {
+								schema: {
+									properties: { result: { type: "object" } },
+								},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -70,6 +98,34 @@ describe("normalizeProductionSpec", () => {
 		});
 		expect(output.components.schemas.Population).toEqual({
 			type: ["integer", "null"],
+		});
+		expect(output.paths["/postcodes"].post.responses).toMatchObject({
+			"200": {
+				content: {
+					"application/json": {
+						schema: {
+							properties: {
+								result: {
+									type: "array",
+									items: {
+										type: "object",
+										required: ["query", "result"],
+										properties: {
+											query: { type: "string" },
+											result: {
+												oneOf: [
+													{ type: "object", properties: { postcode: { type: "string" } } },
+													{ type: "null" },
+												],
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 		});
 		expect(output.paths["/places"].get.parameters).toEqual([
 			{
