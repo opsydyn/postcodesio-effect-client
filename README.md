@@ -43,7 +43,14 @@ bun run docs:dev   # http://localhost:4321
 - Requires `effect ^4.0.0-beta.90` as a peer dependency — Effect v3 is not compatible
 - `@effect/platform-node` is an optional peer dep — only needed when using `PostcodesClient.layer` with `NodeHttpClient`
 - Scottish, Welsh, and Northern Irish postcodes may return `region: null`
+- Some geography-specific fields, including Northern Irish `msoa`, may also be `null`
 - Node ≥22 required
+
+## Live compatibility checks
+
+`bun run test:live` calls the real API with representative English, Scottish,
+Welsh, and Northern Irish postcodes. It is intentionally separate from the
+deterministic local test suite.
 
 ## Automation
 

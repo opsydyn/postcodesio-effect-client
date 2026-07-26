@@ -4,7 +4,7 @@ description: Work safely with postcodes that return null for the region field.
 ---
 
 Postcodes in Scotland, Wales, and Northern Ireland may return `region: null`.
-`region` is an England-specific NHS administrative concept; postcodes.io returns
+`region` is an England-specific administrative concept; postcodes.io returns
 `null` rather than an empty string for postcodes outside the English regional system.
 
 `PostcodeResult.region` is typed `string | null` — not `string` — so TypeScript will
@@ -32,12 +32,23 @@ Effect.runPromise(
 
 ## Background
 
-This nullability is not documented in postcodes.io's own published OpenAPI spec —
-both their upstream spec and a naively generated client declare `region` as a
-non-nullable `string`. The `@effect-postcodes/client` schema was corrected from
-the upstream spec after live testing revealed the real API behaviour with
-`EH25 9NJ`.
+The upstream schema now documents `region` as nullable, but the production
+client also verifies this against representative live responses. Northern Irish
+postcodes can have additional null geography fields: for example, `BT1 5GS`
+returns `msoa: null`.
 
 If you hit a `SchemaError` on a field you expect to be non-null, check whether
 the postcode is outside England — the same pattern may apply to other
 geography-specific fields.
+
+## Live verification
+
+Run the opt-in compatibility lane to check England, Scotland, Wales, and
+Northern Ireland against the live service:
+
+```bash
+bun run test:live
+```
+
+It is deliberately separate from `bun test`, which uses the local Elysia
+service for deterministic coverage.
