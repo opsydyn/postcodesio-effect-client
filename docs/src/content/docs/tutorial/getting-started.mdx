@@ -28,11 +28,11 @@ import { Effect } from "effect"
 import { PostcodesClient } from "@effect-postcodes/client"
 
 const program = Effect.gen(function*() {
-  // yield* PostcodesClient gives you the four service methods
-  const { lookupPostcode } = yield* PostcodesClient
+  // yield* PostcodesClient gives you the complete postcode and place service.
+  const client = yield* PostcodesClient
 
   // Calls the real postcodes.io API
-  const result = yield* lookupPostcode("SW1A1AA")
+  const result = yield* client.lookupPostcode("SW1A1AA")
 
   console.log(JSON.stringify(result, null, 2))
 })
@@ -43,6 +43,16 @@ const program = Effect.gen(function*() {
 Effect.runPromise(
   program.pipe(Effect.provide(PostcodesClient.Default))
 )
+```
+
+`PostcodesClient` also provides postcode text-or-coordinate search, 1–100-item
+bulk lookup, nearest and random postcodes, terminated and Scottish postcode
+lookups, outcode lookup, and place search, lookup, and random-place operations.
+For example, a text search uses the same service:
+
+```typescript
+const client = yield* PostcodesClient
+const matches = yield* client.searchPostcodes({ query: "SW1A" })
 ```
 
 ## 3. Run it
@@ -73,9 +83,9 @@ import { Effect } from "effect"
 import { PostcodesClient, isApiNotFoundError } from "@effect-postcodes/client"
 
 const program = Effect.gen(function*() {
-  const { lookupPostcode } = yield* PostcodesClient
+  const client = yield* PostcodesClient
 
-  const result = yield* lookupPostcode("ZZ99ZZ").pipe(
+  const result = yield* client.lookupPostcode("ZZ99ZZ").pipe(
     Effect.catchIf(isApiNotFoundError, (err) =>
       Effect.sync(() => {
         console.log(`Not found: ${err.identifier}`)

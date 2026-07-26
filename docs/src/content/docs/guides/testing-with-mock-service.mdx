@@ -11,20 +11,30 @@ or network interception needed.
 
 ```typescript
 import { Effect, Layer } from "effect"
-import { PostcodesClient } from "@effect-postcodes/client"
+import { PostcodesClient, type PostcodeResult } from "@effect-postcodes/client"
 
 const mockResult = {
   postcode: "SW1A 1AA",
   country: "England",
   region: "London",
   // fill in the fields your code under test actually reads
-} as any
+} as PostcodeResult
+
+const unexpectedMethod = (method: string) =>
+  Effect.die(new Error(`Unexpected mock call: ${method}`))
 
 const MockClient = Layer.succeed(PostcodesClient, {
   lookupPostcode: (_postcode) => Effect.succeed(mockResult),
-  bulkLookupPostcodes: (_postcodes) => Effect.succeed([]),
-  findOutcode: (_outcode) => Effect.die("not called in this test"),
-  findPlace: (_code) => Effect.die("not called in this test"),
+  bulkLookupPostcodes: (_postcodes) => unexpectedMethod("bulkLookupPostcodes"),
+  findOutcode: (_outcode) => unexpectedMethod("findOutcode"),
+  findPlace: (_code) => unexpectedMethod("findPlace"),
+  randomPostcode: () => unexpectedMethod("randomPostcode"),
+  searchPostcodes: (_search) => unexpectedMethod("searchPostcodes"),
+  findNearestPostcodes: (_postcode) => unexpectedMethod("findNearestPostcodes"),
+  searchPlaces: (_query) => unexpectedMethod("searchPlaces"),
+  randomPlace: () => unexpectedMethod("randomPlace"),
+  lookupTerminatedPostcode: (_postcode) => unexpectedMethod("lookupTerminatedPostcode"),
+  lookupScottishPostcode: (_postcode) => unexpectedMethod("lookupScottishPostcode"),
 })
 
 // In your test (example uses bun:test):
@@ -44,7 +54,7 @@ test("looks up a postcode", async () => {
 ## Testing 404 paths
 
 ```typescript
-import { ApiNotFoundError, isApiNotFoundError } from "@effect-postcodes/client"
+import { ApiNotFoundError } from "@effect-postcodes/client"
 
 const NotFoundClient = Layer.succeed(PostcodesClient, {
   lookupPostcode: (postcode) =>
@@ -53,14 +63,24 @@ const NotFoundClient = Layer.succeed(PostcodesClient, {
       postcode,
       { status: 404, error: "Postcode not found" }
     )),
-  bulkLookupPostcodes: (_) => Effect.die("not called"),
-  findOutcode: (_) => Effect.die("not called"),
-  findPlace: (_) => Effect.die("not called"),
+  bulkLookupPostcodes: (_) => unexpectedMethod("bulkLookupPostcodes"),
+  findOutcode: (_) => unexpectedMethod("findOutcode"),
+  findPlace: (_) => unexpectedMethod("findPlace"),
+  randomPostcode: () => unexpectedMethod("randomPostcode"),
+  searchPostcodes: (_) => unexpectedMethod("searchPostcodes"),
+  findNearestPostcodes: (_) => unexpectedMethod("findNearestPostcodes"),
+  searchPlaces: (_) => unexpectedMethod("searchPlaces"),
+  randomPlace: () => unexpectedMethod("randomPlace"),
+  lookupTerminatedPostcode: (_) => unexpectedMethod("lookupTerminatedPostcode"),
+  lookupScottishPostcode: (_) => unexpectedMethod("lookupScottishPostcode"),
 })
 ```
 
-## Why `Effect.die` for unused methods
+## Why the complete interface matters
 
-`Effect.die` converts an unexpected call into a defect — a failing test will tell
-you exactly which method was called unexpectedly, rather than silently returning
-an undefined value that masks the problem.
+`Layer.succeed(PostcodesClient, ...)` replaces the complete public service, so a
+mock must provide all eleven methods. The `unexpectedMethod` helper converts an
+unexpected call into a defect rather than silently returning an undefined value.
+Keep the result fixture as small as the code under test allows, but type it as
+the exported runtime result type so the mock's expected success value remains
+explicit.

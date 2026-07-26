@@ -12,7 +12,7 @@ export default defineConfig({
 					{
 						base: "openapi",
 						label: "HTTP endpoints",
-						schema: "../openapi/spec.yaml",
+						schema: "../openapi/production.bundle.yaml",
 					},
 				]),
 			],
