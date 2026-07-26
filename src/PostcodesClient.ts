@@ -12,6 +12,8 @@ import type {
 } from "../generated/PostcodesApi.ts";
 import type {
 	NearestPostcode200,
+	PlaceQuery200,
+	RandomPlace200,
 	PostcodeLookup200,
 	RandomPostcode200,
 } from "../generated/PostcodesProduction.ts";
@@ -36,6 +38,10 @@ export class PostcodesClient extends Context.Service<
 		readonly findNearestPostcodes: (
 			postcode: string,
 		) => Effect.Effect<NearestPostcode200["result"], ApiServiceError>;
+		readonly searchPlaces: (
+			query: string,
+		) => Effect.Effect<PlaceQuery200["result"], ApiServiceError>;
+		readonly randomPlace: () => Effect.Effect<RandomPlace200["result"], ApiServiceError>;
 	}
 >()("@effect-postcodes/client/PostcodesClient") {
 	/** Resolves the service directly — for scripts and top-level programs.

@@ -87,6 +87,16 @@ export function makeApiServiceFromClient(client: HttpClient.HttpClient, config: 
 				Effect.map((response) => response.result),
 				Effect.mapError((error) => error as ApiServiceError),
 			),
+		searchPlaces: (query: string) =>
+			production.PlaceQuery({ params: { query } }).pipe(
+				Effect.map((response) => response.result),
+				Effect.mapError((error) => error as ApiServiceError),
+			),
+		randomPlace: () =>
+			production.randomPlace(undefined).pipe(
+				Effect.map((response) => response.result),
+				Effect.mapError((error) => error as ApiServiceError),
+			),
 	};
 }
 

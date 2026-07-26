@@ -199,6 +199,11 @@ export const placeResponse = {
 	},
 } satisfies PostcodesFull.RandomPlace200;
 
+export const searchPlacesResponse = {
+	status: 200,
+	result: [placeResponse.result],
+} satisfies PostcodesProduction.PlaceQuery200;
+
 export const findPlaceResponse = placeResponse satisfies PostcodesApi.FindPlace200;
 
 export const findPlaceNotFoundResponse = {
