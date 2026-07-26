@@ -4,9 +4,21 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import * as v from "valibot";
 
-import { classifySpecSyncChanges } from "../../scripts/specSyncPolicy.ts";
+import {
+	changedFilesFromGitDiff,
+	classifySpecSyncChanges,
+	verifyRequestedReleasePolicy,
+} from "../../scripts/specSyncPolicy.ts";
 
 const repoRoot = process.cwd();
+
+const getChangedFiles = (): ReadonlyArray<string> =>
+	changedFilesFromGitDiff(
+		spawnSync("git", ["diff", "--name-only", "HEAD", "--"], {
+			cwd: repoRoot,
+			encoding: "utf-8",
+		}),
+	);
 
 export const runScript = defineTool({
 	name: "run_script",
@@ -50,15 +62,7 @@ export const checkForChanges = defineTool({
 		requiresPackageRelease: v.boolean(),
 	}),
 	async run() {
-		const result = spawnSync(
-			"git",
-			["diff", "--name-only", "HEAD", "--"],
-			{ cwd: repoRoot, encoding: "utf-8" },
-		);
-		const changedFiles = (result.stdout ?? "")
-			.split("\n")
-			.map((l) => l.trim())
-			.filter(Boolean);
+		const changedFiles = getChangedFiles();
 		const policy = classifySpecSyncChanges(changedFiles);
 		return {
 			hasChanges: changedFiles.length > 0,
@@ -113,6 +117,10 @@ export const submitSyncPR = defineTool({
 	}),
 	output: v.object({ prUrl: v.string() }),
 	async run({ input }) {
+		const policy = verifyRequestedReleasePolicy(
+			getChangedFiles(),
+			input.requiresPackageRelease,
+		);
 		const ts = new Date()
 			.toISOString()
 			.replace(/[:.]/g, "-")
@@ -121,7 +129,7 @@ export const submitSyncPR = defineTool({
 
 		execFileSync("git", ["checkout", "-b", branch], { cwd: repoRoot, stdio: "pipe" });
 
-		if (input.requiresPackageRelease) {
+		if (policy.requiresPackageRelease) {
 			mkdirSync(join(repoRoot, ".changeset"), { recursive: true });
 			writeFileSync(
 				join(repoRoot, ".changeset", `spec-sync-${ts}.md`),
