@@ -6,6 +6,7 @@ import {
 	findPlaceNotFoundResponse,
 	findPlaceResponse,
 	lookupPostcodeNotFoundResponse,
+	lookupNorthernIrishPostcodeResponse,
 	lookupPostcodeResponse,
 	lookupScottishPostcodeResponse,
 	outcodeNotFoundResponse,
@@ -25,6 +26,7 @@ export const startSpikeMockServer = (port = 0) =>
 			Match.value(params.postcode.replaceAll(" ", "").toUpperCase()).pipe(
 				Match.when("SW1A1AA", () => lookupPostcodeResponse),
 				Match.when("EH259NJ", () => lookupScottishPostcodeResponse),
+				Match.when("BT15GS", () => lookupNorthernIrishPostcodeResponse),
 				Match.when("ZZ99ZZ", () => jsonResponse(lookupPostcodeNotFoundResponse, 404)),
 				Match.orElse(() => jsonResponse(lookupPostcodeNotFoundResponse, 404)),
 			),

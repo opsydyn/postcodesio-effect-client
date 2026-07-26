@@ -180,7 +180,8 @@ components:
         region:
           type: [string, "null"]
         lsoa: { type: string }
-        msoa: { type: string }
+        msoa:
+          type: [string, "null"]
         parish:
           type: [string, "null"]
         parliamentary_constituency: { type: string }

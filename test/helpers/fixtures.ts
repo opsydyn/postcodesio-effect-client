@@ -60,6 +60,19 @@ export const lookupScottishPostcodeResponse = {
 	result: scottishPostcodeResult,
 } satisfies PostcodesApi.LookupPostcode200;
 
+export const northernIrishPostcodeResult = {
+	...postcodeResult,
+	postcode: "BT1 5GS",
+	country: "Northern Ireland",
+	region: null,
+	msoa: null,
+} satisfies PostcodesApi.LookupPostcode200["result"];
+
+export const lookupNorthernIrishPostcodeResponse = {
+	status: 200,
+	result: northernIrishPostcodeResult,
+} satisfies PostcodesApi.LookupPostcode200;
+
 export const bulkLookupPostcodesResponse = {
 	status: 200,
 	result: [

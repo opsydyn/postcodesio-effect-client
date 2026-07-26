@@ -77,6 +77,16 @@ describe("@effect-postcodes/client contract", () => {
 			}).pipe(Effect.provide(clientLayer(baseUrl))),
 		));
 
+	test("decodes a null msoa for Northern Irish postcodes", () =>
+		Effect.runPromise(
+			Effect.gen(function* () {
+				const { lookupPostcode } = yield* PostcodesClient;
+				const postcode = yield* lookupPostcode("BT1 5GS");
+				expect(postcode.country).toBe("Northern Ireland");
+				expect(postcode.msoa).toBeNull();
+			}).pipe(Effect.provide(clientLayer(baseUrl))),
+		));
+
 	test("PostcodesClient is mockable via Layer.succeed", () =>
 		Effect.runPromise(
 			Effect.gen(function* () {
