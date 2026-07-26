@@ -200,8 +200,8 @@ export const makeApiService = Effect.fnUntraced(function* (config: ApiConfig) {
 		}),
 	);
 
-	// Generated.make only types its client param as plain HttpClientError; the
-	// RateLimiterError this adds still flows through at runtime and is folded
-	// back into ApiServiceError by mapGeneratedError below.
+	// Production.make types its client parameter as plain HttpClientError; the
+	// RateLimiterError added here still flows through at runtime and remains in
+	// the public ApiServiceError channel.
 	return makeApiServiceFromClient(rateLimitedClient as HttpClient.HttpClient, config);
 });

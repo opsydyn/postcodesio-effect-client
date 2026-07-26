@@ -1,14 +1,15 @@
 // Service
 export { PostcodesClient } from "./PostcodesClient.ts";
-export type {
+export type { PostcodeSearch } from "./PostcodesClient.ts";
+export {
 	BulkLookupItem,
+	NearestPostcode,
 	OutcodeResult,
 	PlaceResult,
 	PostcodeResult,
-	PostcodeSearch,
 	ScottishPostcode,
 	TerminatedPostcode,
-} from "./PostcodesClient.ts";
+} from "./Results.ts";
 
 // Config
 export type { ApiConfig } from "./ApiConfig.ts";

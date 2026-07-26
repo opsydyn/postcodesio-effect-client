@@ -3,8 +3,7 @@ import { describe, test } from "bun:test";
 import { Schema } from "effect";
 import { FastCheck } from "effect/testing";
 
-import { BulkLookupItem, PostcodeResult } from "../generated/PostcodesApi.ts";
-import { ErrorEnvelope } from "../src/index.ts";
+import { BulkLookupItem, ErrorEnvelope, PostcodeResult } from "../src/index.ts";
 
 describe("schema properties", () => {
 	test("PostcodeResult region is always string | null — never undefined", () => {

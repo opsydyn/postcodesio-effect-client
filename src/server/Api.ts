@@ -4,11 +4,7 @@ import * as HttpApiEndpoint from "effect/unstable/httpapi/HttpApiEndpoint";
 import * as HttpApiGroup from "effect/unstable/httpapi/HttpApiGroup";
 
 import { BulkLookupRequest } from "../../generated/PostcodesApi.ts";
-
-const ProductionBulkLookupItem = Schema.Struct({
-	query: Schema.String,
-	result: Schema.Unknown,
-});
+import { BulkLookupItem, OutcodeResult, PlaceResult, PostcodeResult } from "../Results.ts";
 
 export class PostcodeNotFound extends Schema.TaggedErrorClass<PostcodeNotFound>()(
 	"PostcodeNotFound",
@@ -32,27 +28,27 @@ export class PostcodesApiGroup extends HttpApiGroup.make("postcodes")
 	.add(
 		HttpApiEndpoint.get("lookupPostcode", "/postcodes/:postcode", {
 			params: { postcode: Schema.String },
-			success: Schema.Unknown,
+			success: PostcodeResult,
 			error: PostcodeNotFound,
 		}),
 	)
 	.add(
 		HttpApiEndpoint.post("bulkLookupPostcodes", "/postcodes", {
 			payload: BulkLookupRequest,
-			success: Schema.Array(ProductionBulkLookupItem),
+			success: Schema.Array(BulkLookupItem),
 		}),
 	)
 	.add(
 		HttpApiEndpoint.get("findOutcode", "/outcodes/:outcode", {
 			params: { outcode: Schema.String },
-			success: Schema.Unknown,
+			success: OutcodeResult,
 			error: OutcodeNotFound,
 		}),
 	)
 	.add(
 		HttpApiEndpoint.get("findPlace", "/places/:code", {
 			params: { code: Schema.String },
-			success: Schema.Unknown,
+			success: PlaceResult,
 			error: PlaceNotFound,
 		}),
 	) {}
