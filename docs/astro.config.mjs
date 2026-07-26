@@ -5,7 +5,7 @@ import starlightOpenAPI, { openAPISidebarGroups } from "starlight-openapi";
 export default defineConfig({
 	integrations: [
 		starlight({
-			title: "@effect-postcodes/client",
+			title: "@opsydyn/effect-postcodes-client",
 			description: "Effect-native TypeScript client for the postcodes.io API",
 			plugins: [
 				starlightOpenAPI([

@@ -133,7 +133,7 @@ export const submitSyncPR = defineTool({
 			mkdirSync(join(repoRoot, ".changeset"), { recursive: true });
 			writeFileSync(
 				join(repoRoot, ".changeset", `spec-sync-${ts}.md`),
-				`---\n"@effect-postcodes/client": ${input.bumpType}\n---\n\n${input.changesetSummary}\n`,
+				`---\n"@opsydyn/effect-postcodes-client": ${input.bumpType}\n---\n\n${input.changesetSummary}\n`,
 				"utf-8",
 			);
 		}

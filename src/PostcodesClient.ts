@@ -48,7 +48,7 @@ export class PostcodesClient extends Context.Service<
 			postcode: string,
 		) => Effect.Effect<ScottishPostcode, ApiServiceError>;
 	}
->()("@effect-postcodes/client/PostcodesClient") {
+>()("@opsydyn/effect-postcodes-client/PostcodesClient") {
 	/** Resolves the service directly — for scripts and top-level programs.
 	 * Bundles FetchHttpClient and an in-memory RateLimiterStore internally. */
 	static readonly make = (config: ApiConfig = defaultApiConfig) =>

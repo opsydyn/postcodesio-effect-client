@@ -11,7 +11,7 @@ or network interception needed.
 
 ```typescript
 import { Effect, Layer } from "effect"
-import { PostcodesClient, type PostcodeResult } from "@effect-postcodes/client"
+import { PostcodesClient, type PostcodeResult } from "@opsydyn/effect-postcodes-client"
 
 const mockResult = {
   postcode: "SW1A 1AA",
@@ -54,7 +54,7 @@ test("looks up a postcode", async () => {
 ## Testing 404 paths
 
 ```typescript
-import { ApiNotFoundError } from "@effect-postcodes/client"
+import { ApiNotFoundError } from "@opsydyn/effect-postcodes-client"
 
 const NotFoundClient = Layer.succeed(PostcodesClient, {
   lookupPostcode: (postcode) =>

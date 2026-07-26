@@ -1,4 +1,4 @@
-# @effect-postcodes/client
+# @opsydyn/effect-postcodes-client
 
 ## 0.2.0
 

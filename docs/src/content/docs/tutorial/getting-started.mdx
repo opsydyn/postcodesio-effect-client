@@ -15,7 +15,7 @@ case where a postcode doesn't exist.
 ## 1. Install
 
 ```bash
-npm install @effect-postcodes/client effect
+npm install @opsydyn/effect-postcodes-client effect
 ```
 
 `@effect/platform-node` is only needed if you later swap to Node.js's native HTTP
@@ -25,7 +25,7 @@ client. The default `FetchHttpClient` works without it.
 
 ```typescript
 import { Effect } from "effect"
-import { PostcodesClient } from "@effect-postcodes/client"
+import { PostcodesClient } from "@opsydyn/effect-postcodes-client"
 
 const program = Effect.gen(function*() {
   // yield* PostcodesClient gives you the complete postcode and place service.
@@ -80,7 +80,7 @@ You should see output like:
 
 ```typescript
 import { Effect } from "effect"
-import { PostcodesClient, isApiNotFoundError } from "@effect-postcodes/client"
+import { PostcodesClient, isApiNotFoundError } from "@opsydyn/effect-postcodes-client"
 
 const program = Effect.gen(function*() {
   const client = yield* PostcodesClient

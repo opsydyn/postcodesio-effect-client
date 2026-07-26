@@ -25,7 +25,7 @@ afterAll(() => {
 const clientLayer = (url: string) =>
 	PostcodesClient.layer({ baseUrl: url }).pipe(Layer.provide(FetchHttpClient.layer));
 
-describe("@effect-postcodes/client contract", () => {
+describe("@opsydyn/effect-postcodes-client contract", () => {
 	test("lookupPostcode, bulkLookupPostcodes, and 404 error flow", () =>
 		Effect.runPromise(
 			Effect.gen(function* () {

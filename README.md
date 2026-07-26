@@ -1,6 +1,6 @@
-# @effect-postcodes/client
+# @opsydyn/effect-postcodes-client
 
-`@effect-postcodes/client` is an Effect-native TypeScript client for the
+`@opsydyn/effect-postcodes-client` is an Effect-native TypeScript client for the
 [postcodes.io](https://postcodes.io) API. It exposes the supported postcode and
 place operations through one stable `PostcodesClient` service, with generated
 HTTP transport kept internal to the package.
@@ -8,7 +8,7 @@ HTTP transport kept internal to the package.
 ## Install
 
 ```bash
-npm install @effect-postcodes/client effect
+npm install @opsydyn/effect-postcodes-client effect
 ```
 
 The package requires Effect 4 beta. `@effect/platform-node` is an optional peer
@@ -20,7 +20,7 @@ built-in Fetch HTTP client.
 
 ```ts
 import { Effect } from "effect";
-import { PostcodesClient } from "@effect-postcodes/client";
+import { PostcodesClient } from "@opsydyn/effect-postcodes-client";
 
 const program = Effect.gen(function* () {
 	const client = yield* PostcodesClient;

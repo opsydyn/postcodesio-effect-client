@@ -28,7 +28,7 @@ npm install @effect/platform-node
 ```typescript
 import { Effect, Layer } from "effect"
 import { NodeHttpClient } from "@effect/platform-node"
-import { PostcodesClient, makeApiConfig } from "@effect-postcodes/client"
+import { PostcodesClient, makeApiConfig } from "@opsydyn/effect-postcodes-client"
 
 const AppLayer = PostcodesClient.layer(
   makeApiConfig({ baseUrl: "https://api.postcodes.io" })

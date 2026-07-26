@@ -9,7 +9,7 @@ import {
 
 export default defineAgent(() => ({
 	model: "anthropic/claude-sonnet-4-6",
-	instructions: `You are a release automation agent for the @effect-postcodes/client npm package.
+	instructions: `You are a release automation agent for the @opsydyn/effect-postcodes-client npm package.
 
 Your job: sync the postcodes.io upstream OpenAPI spec and open a pull request if anything changed.
 

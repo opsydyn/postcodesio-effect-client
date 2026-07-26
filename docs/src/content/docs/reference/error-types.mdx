@@ -27,7 +27,7 @@ coordinates. Narrow it with `isApiValidationError`.
 
 ```ts
 import { Effect } from "effect";
-import { isApiValidationError } from "@effect-postcodes/client";
+import { isApiValidationError } from "@opsydyn/effect-postcodes-client";
 
 const result = yield* client.bulkLookupPostcodes([]).pipe(
 	Effect.catchIf(isApiValidationError, (error) => Effect.fail(error.message)),

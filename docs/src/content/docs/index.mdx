@@ -1,17 +1,17 @@
 ---
-title: "@effect-postcodes/client"
+title: "@opsydyn/effect-postcodes-client"
 description: Production Effect-native TypeScript client for the postcodes.io API.
 ---
 
 import { LinkCard, CardGrid } from '@astrojs/starlight/components'
 
-`@effect-postcodes/client` is the production Effect-native client for
+`@opsydyn/effect-postcodes-client` is the production Effect-native client for
 [postcodes.io](https://postcodes.io). It provides one stable `PostcodesClient`
 service for the complete postcode and place endpoint surface; generated OpenAPI
 transport stays internal.
 
 ```bash
-npm install @effect-postcodes/client effect
+npm install @opsydyn/effect-postcodes-client effect
 ```
 
 The service supports postcode lookup, text-or-coordinate postcode search,
@@ -26,7 +26,7 @@ limiter failures through `ApiServiceError`.
 
 The package exports runtime schemas and inferred types for postcode, bulk,
 nearest, terminated, Scottish, outcode, and place results. Import those and the
-service from `@effect-postcodes/client`, never from the generated transport.
+service from `@opsydyn/effect-postcodes-client`, never from the generated transport.
 
 <CardGrid>
   <LinkCard

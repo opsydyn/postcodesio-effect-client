@@ -1,4 +1,4 @@
-# @effect-postcodes/client
+# @opsydyn/effect-postcodes-client
 
 The production-bound Effect-native TypeScript client for `postcodes.io`.
 
@@ -48,7 +48,7 @@ Keep work here focused on delivering a production client that:
 - **Do not hand-edit generated output as the default fix** — prefer changing the spec input, generation command, wrapper layer, or bundling script. If generator output itself is the subject of investigation, document the finding in `ASSESSMENT.md`.
 - **The wrapper is the stable production seam** — base URL injection, auth, input validation, ergonomic error mapping, and response shaping belong in `src/internal/ApiService.ts` and `src/PostcodesClient.ts`, not in generated files.
 - **The full bundled upstream contract is the source input for endpoint expansion** — any verified corrections must be explicit, reviewable, and covered by tests.
-- **Consumers use the public barrel only** — production code imports from `@effect-postcodes/client`, represented locally by `src/index.ts`, never directly from `generated/`.
+- **Consumers use the public barrel only** — production code imports from `@opsydyn/effect-postcodes-client`, represented locally by `src/index.ts`, never directly from `generated/`.
 - **Keep the fast test lane local** — default tests should stay deterministic and use the local Elysia mock server, not live `postcodes.io` HTTP.
 - **Keep live compatibility checks separate** — opt-in live checks should cover representative postcodes from England, Scotland, Wales, and Northern Ireland without making the default suite depend on the network.
 - **Bundle the full upstream spec before full generation** — in this repo, generating directly from the raw multi-file upstream entrypoint is a known dead end. The supported path is `pull:full-spec` -> `bundle:full-spec` -> `generate:full`.

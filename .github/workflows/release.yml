@@ -41,7 +41,7 @@ jobs:
         with:
           # When the "Version Packages" PR is merged this command runs to publish
           publish: bun run release
-          title: "chore: release @effect-postcodes/client"
+          title: "chore: release @opsydyn/effect-postcodes-client"
           commit: "chore: version packages"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

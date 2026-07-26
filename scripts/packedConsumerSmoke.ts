@@ -43,7 +43,7 @@ writeFileSync(
 			private: true,
 			type: "module",
 			dependencies: {
-				"@effect-postcodes/client": `file:${packageTarball}`,
+				"@opsydyn/effect-postcodes-client": `file:${packageTarball}`,
 				effect: packageJson.devDependencies.effect,
 			},
 		},
@@ -54,7 +54,7 @@ writeFileSync(
 writeFileSync(
 	join(consumerRoot, "smoke.ts"),
 	[
-		'import { PostcodesClient, makeApiConfig } from "@effect-postcodes/client";',
+		'import { PostcodesClient, makeApiConfig } from "@opsydyn/effect-postcodes-client";',
 		"",
 		'if (typeof PostcodesClient.make !== "function") {',
 		'\tthrow new Error("PostcodesClient.make is not available from the packed package");',

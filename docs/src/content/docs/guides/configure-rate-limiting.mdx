@@ -16,7 +16,7 @@ The default pacing is conservative: 30 requests per 10 seconds. Tune it via
 ```typescript
 import { Duration, Effect, Layer } from "effect"
 import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient"
-import { PostcodesClient, makeApiConfig } from "@effect-postcodes/client"
+import { PostcodesClient, makeApiConfig } from "@opsydyn/effect-postcodes-client"
 
 const layer = PostcodesClient.layer(
   makeApiConfig({

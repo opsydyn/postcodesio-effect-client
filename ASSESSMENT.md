@@ -1,7 +1,7 @@
-# Production assessment: `@effect-postcodes/client`
+# Production assessment: `@opsydyn/effect-postcodes-client`
 
 > **Current direction — 2026-07-26:** the generator spike is complete. This
-> repository owns the production-bound `@effect-postcodes/client` package.
+> repository owns the production-bound `@opsydyn/effect-postcodes-client` package.
 
 ## Decision
 
@@ -41,7 +41,7 @@ The generator is suitable here because its replaceable output is isolated:
 
 - handwritten code owns URL configuration, path encoding, input validation,
   response unwrapping, error mapping, and rate limiting
-- consumer code imports only `@effect-postcodes/client`
+- consumer code imports only `@opsydyn/effect-postcodes-client`
 - generated-code lint exceptions remain scoped to generated files
 
 There are still upstream-contract caveats. `postcodes.io` has returned nullable
