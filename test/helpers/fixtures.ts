@@ -66,6 +66,7 @@ export const northernIrishPostcodeResult = {
 	country: "Northern Ireland",
 	region: null,
 	msoa: null,
+	pfa: null,
 } satisfies PostcodesApi.LookupPostcode200["result"];
 
 export const lookupNorthernIrishPostcodeResponse = {

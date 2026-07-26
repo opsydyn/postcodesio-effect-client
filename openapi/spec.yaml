@@ -169,31 +169,31 @@ components:
       properties:
         postcode: { type: string }
         quality: { type: integer, enum: [1, 2, 3, 4, 5, 6, 9] }
-        eastings: { type: integer }
-        northings: { type: integer }
+        eastings: { type: [integer, "null"] }
+        northings: { type: [integer, "null"] }
         country: { type: string }
-        nhs_ha: { type: string }
-        longitude: { type: number }
-        latitude: { type: number }
-        european_electoral_region: { type: string }
-        primary_care_trust: { type: string }
+        nhs_ha: { type: [string, "null"] }
+        longitude: { type: [number, "null"] }
+        latitude: { type: [number, "null"] }
+        european_electoral_region: { type: [string, "null"] }
+        primary_care_trust: { type: [string, "null"] }
         region:
           type: [string, "null"]
-        lsoa: { type: string }
+        lsoa: { type: [string, "null"] }
         msoa:
           type: [string, "null"]
         parish:
           type: [string, "null"]
-        parliamentary_constituency: { type: string }
+        parliamentary_constituency: { type: [string, "null"] }
         admin_county:
           type: [string, "null"]
-        admin_district: { type: string }
-        admin_ward: { type: string }
-        ccg: { type: string }
+        admin_district: { type: [string, "null"] }
+        admin_ward: { type: [string, "null"] }
+        ccg: { type: [string, "null"] }
         ced:
           type: [string, "null"]
         nuts: { type: string }
-        pfa: { type: string }
+        pfa: { type: [string, "null"] }
         codes:
           $ref: "#/components/schemas/PostcodeCodes"
     PostcodeEnvelope:

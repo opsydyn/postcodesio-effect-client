@@ -84,6 +84,7 @@ describe("@effect-postcodes/client contract", () => {
 				const postcode = yield* lookupPostcode("BT1 5GS");
 				expect(postcode.country).toBe("Northern Ireland");
 				expect(postcode.msoa).toBeNull();
+				expect(postcode.pfa).toBeNull();
 			}).pipe(Effect.provide(clientLayer(baseUrl))),
 		));
 
