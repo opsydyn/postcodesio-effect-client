@@ -1,9 +1,9 @@
 import { Effect, Match, Predicate, Result } from "effect";
 import * as HttpClient from "effect/unstable/http/HttpClient";
+import * as HttpClientError from "effect/unstable/http/HttpClientError";
 import * as HttpClientRequest from "effect/unstable/http/HttpClientRequest";
 import * as RateLimiter from "effect/unstable/persistence/RateLimiter";
 
-import * as Generated from "../../generated/PostcodesApi.ts";
 import * as Production from "../../generated/PostcodesProduction.ts";
 import type { ApiConfig } from "../ApiConfig.ts";
 import {
@@ -11,8 +11,8 @@ import {
 	ApiValidationError,
 	type ApiServiceError,
 	type ApiValidationError as ApiValidationErrorType,
-	isGeneratedNotFoundError,
 } from "../Errors.ts";
+import type { PostcodeSearch } from "../PostcodeSearch.ts";
 import { defaultRateLimit } from "./RateLimiting.ts";
 
 const configureHttpClient = (
@@ -41,12 +41,18 @@ const configureHttpClient = (
 	return client.pipe(HttpClient.mapRequest(configureRequest));
 };
 
-const mapGeneratedError =
+const isNotFoundHttpClientError = (error: unknown): boolean =>
+	HttpClientError.isHttpClientError(error) && error.response?.status === 404;
+
+const mapProductionError =
 	(resource: string, identifier: string) =>
 	(error: unknown): ApiServiceError =>
 		Match.value(error).pipe(
-			Match.when(isGeneratedNotFoundError, (notFoundError) =>
-				ApiNotFoundError(resource, identifier, notFoundError.cause),
+			Match.when(isNotFoundHttpClientError, () =>
+				ApiNotFoundError(resource, identifier, {
+					status: 404,
+					error: `${resource} not found`,
+				}),
 			),
 			Match.orElse((other) => other as ApiServiceError),
 		);
@@ -81,15 +87,34 @@ const validateBulkPostcodeCount = (
 		Match.orElse(() => Result.succeed(postcodes)),
 	);
 
+const validatePostcodeSearch = (
+	search: PostcodeSearch,
+): Result.Result<PostcodeSearch, ApiValidationErrorType> =>
+	Match.value([
+		search.query !== undefined,
+		search.latitude !== undefined,
+		search.longitude !== undefined,
+	] as const).pipe(
+		Match.when([true, false, false], () => Result.succeed(search)),
+		Match.when([false, true, true], () => Result.succeed(search)),
+		Match.orElse(() =>
+			Result.fail(
+				ApiValidationError(
+					"search",
+					"Provide either query or both latitude and longitude, but not both search modes",
+				),
+			),
+		),
+	);
+
 export function makeApiServiceFromClient(client: HttpClient.HttpClient, config: ApiConfig) {
-	const generated = Generated.make(configureHttpClient(client, config));
 	const production = Production.make(configureHttpClient(client, config));
 
 	return {
 		lookupPostcode: (postcode: string) =>
-			generated.lookupPostcode(encodePathSegment(postcode), undefined).pipe(
+			production.LookupPostcode(encodePathSegment(postcode), undefined).pipe(
 				Effect.map((response) => response.result),
-				Effect.mapError(mapGeneratedError("postcode", postcode)),
+				Effect.mapError(mapProductionError("postcode", postcode)),
 			),
 		bulkLookupPostcodes: (postcodes: ReadonlyArray<string>) =>
 			Effect.fromResult(validateBulkPostcodeCount(postcodes)).pipe(
@@ -100,22 +125,23 @@ export function makeApiServiceFromClient(client: HttpClient.HttpClient, config: 
 				Effect.mapError((error) => error as ApiServiceError),
 			),
 		findOutcode: (outcode: string) =>
-			generated.findOutcode(encodePathSegment(outcode), undefined).pipe(
+			production.FindOutcode(encodePathSegment(outcode), undefined).pipe(
 				Effect.map((response) => response.result),
-				Effect.mapError(mapGeneratedError("outcode", outcode)),
+				Effect.mapError(mapProductionError("outcode", outcode)),
 			),
 		findPlace: (code: string) =>
-			generated.findPlace(encodePathSegment(code), undefined).pipe(
+			production.FindPlace(encodePathSegment(code), undefined).pipe(
 				Effect.map((response) => response.result),
-				Effect.mapError(mapGeneratedError("place", code)),
+				Effect.mapError(mapProductionError("place", code)),
 			),
 		randomPostcode: () =>
 			production.randomPostcode(undefined).pipe(
 				Effect.map((response) => response.result),
 				Effect.mapError((error) => error as ApiServiceError),
 			),
-		searchPostcodes: (query: string) =>
-			production.PostcodeLookup({ params: { query } }).pipe(
+		searchPostcodes: (search: PostcodeSearch) =>
+			Effect.fromResult(validatePostcodeSearch(search)).pipe(
+				Effect.flatMap((validatedSearch) => production.PostcodeLookup({ params: validatedSearch })),
 				Effect.map((response) => response.result),
 				Effect.mapError((error) => error as ApiServiceError),
 			),

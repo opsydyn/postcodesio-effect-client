@@ -98,6 +98,33 @@ export const randomPostcodeResponse = {
 	result: productionPostcodeResult,
 } satisfies PostcodesProduction.RandomPostcode200;
 
+export const productionLookupPostcodeResponse = {
+	status: 200,
+	result: productionPostcodeResult,
+} satisfies PostcodesProduction.LookupPostcode200;
+
+export const productionLookupScottishPostcodeResponse = {
+	status: 200,
+	result: {
+		...productionPostcodeResult,
+		postcode: "EH25 9NJ",
+		country: "Scotland",
+		region: null,
+	},
+} satisfies PostcodesProduction.LookupPostcode200;
+
+export const productionLookupNorthernIrishPostcodeResponse = {
+	status: 200,
+	result: {
+		...productionPostcodeResult,
+		postcode: "BT1 5GS",
+		country: "Northern Ireland",
+		region: null,
+		msoa: null,
+		pfa: null,
+	},
+} satisfies PostcodesProduction.LookupPostcode200;
+
 export const searchPostcodesResponse = {
 	status: 200,
 	result: [productionPostcodeResult],

@@ -69,7 +69,7 @@ describe("client behavioral properties", () => {
 		);
 	});
 
-	test("PostcodesClient.Default always provides all 4 required service methods", async () => {
+	test("PostcodesClient.Default provides the complete public operation surface", async () => {
 		const service = await Effect.runPromise(
 			Effect.gen(function* () {
 				return yield* PostcodesClient;
@@ -79,5 +79,12 @@ describe("client behavioral properties", () => {
 		expect(typeof service.bulkLookupPostcodes).toBe("function");
 		expect(typeof service.findOutcode).toBe("function");
 		expect(typeof service.findPlace).toBe("function");
+		expect(typeof service.randomPostcode).toBe("function");
+		expect(typeof service.searchPostcodes).toBe("function");
+		expect(typeof service.findNearestPostcodes).toBe("function");
+		expect(typeof service.searchPlaces).toBe("function");
+		expect(typeof service.randomPlace).toBe("function");
+		expect(typeof service.lookupTerminatedPostcode).toBe("function");
+		expect(typeof service.lookupScottishPostcode).toBe("function");
 	});
 });

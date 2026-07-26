@@ -5,14 +5,14 @@ import {
 	findPlaceNotFoundResponse,
 	findPlaceResponse,
 	lookupPostcodeNotFoundResponse,
-	lookupNorthernIrishPostcodeResponse,
-	lookupPostcodeResponse,
-	lookupScottishPostcodeResponse,
 	nearestPostcodesResponse,
 	outcodeNotFoundResponse,
 	outcodeResponse,
 	placeResponse,
 	productionBulkLookupPostcodesResponse,
+	productionLookupNorthernIrishPostcodeResponse,
+	productionLookupPostcodeResponse,
+	productionLookupScottishPostcodeResponse,
 	randomPostcodeResponse,
 	searchPostcodesResponse,
 	searchPlacesResponse,
@@ -26,20 +26,34 @@ const jsonResponse = (body: unknown, status = 200) =>
 		headers: { "Content-Type": "application/json" },
 	});
 
+const isTextPostcodeSearch = (query: { readonly query?: string }): boolean =>
+	query.query === "SW1A";
+
+const isCoordinatePostcodeSearch = (query: {
+	readonly latitude?: string;
+	readonly longitude?: string;
+}): boolean => query.latitude === "51.501" && query.longitude === "-0.141";
+
 export const startSpikeMockServer = (port = 0) =>
 	new Elysia()
 		.get("/postcodes/:postcode/nearest", () => nearestPostcodesResponse)
 		.get("/postcodes/:postcode", ({ params }) =>
 			Match.value(params.postcode.replaceAll(" ", "").toUpperCase()).pipe(
-				Match.when("SW1A1AA", () => lookupPostcodeResponse),
-				Match.when("EH259NJ", () => lookupScottishPostcodeResponse),
-				Match.when("BT15GS", () => lookupNorthernIrishPostcodeResponse),
+				Match.when("SW1A1AA", () => productionLookupPostcodeResponse),
+				Match.when("EH259NJ", () => productionLookupScottishPostcodeResponse),
+				Match.when("BT15GS", () => productionLookupNorthernIrishPostcodeResponse),
 				Match.when("ZZ99ZZ", () => jsonResponse(lookupPostcodeNotFoundResponse, 404)),
 				Match.orElse(() => jsonResponse(lookupPostcodeNotFoundResponse, 404)),
 			),
 		)
 		.post("/postcodes", () => productionBulkLookupPostcodesResponse)
-		.get("/postcodes", () => searchPostcodesResponse)
+		.get("/postcodes", ({ query }) =>
+			Match.value(query).pipe(
+				Match.when(isTextPostcodeSearch, () => searchPostcodesResponse),
+				Match.when(isCoordinatePostcodeSearch, () => searchPostcodesResponse),
+				Match.orElse(() => jsonResponse(lookupPostcodeNotFoundResponse, 404)),
+			),
+		)
 		.get("/random/postcodes", () => randomPostcodeResponse)
 		.get("/terminated_postcodes/:postcode", ({ params }) =>
 			Match.value(params.postcode.replaceAll(" ", "").toUpperCase()).pipe(

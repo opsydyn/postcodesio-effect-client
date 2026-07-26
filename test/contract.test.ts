@@ -33,6 +33,7 @@ describe("@effect-postcodes/client contract", () => {
 
 				const postcode = yield* lookupPostcode("SW1A1AA");
 				expect(postcode.postcode).toBe("SW1A 1AA");
+				expect(postcode.incode).toBe("1AA");
 
 				const bulk = yield* bulkLookupPostcodes(["SW1A1AA", "ZZ99ZZ"]);
 				expect(bulk).toHaveLength(2);
@@ -102,7 +103,7 @@ describe("@effect-postcodes/client contract", () => {
 						findOutcode: (_: string) => Effect.die("not called"),
 						findPlace: (_: string) => Effect.die("not called"),
 						randomPostcode: () => Effect.die("not called"),
-						searchPostcodes: (_: string) => Effect.die("not called"),
+						searchPostcodes: (_) => Effect.die("not called"),
 						findNearestPostcodes: (_: string) => Effect.die("not called"),
 						searchPlaces: (_: string) => Effect.die("not called"),
 						randomPlace: () => Effect.die("not called"),

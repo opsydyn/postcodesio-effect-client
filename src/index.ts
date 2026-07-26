@@ -1,12 +1,21 @@
 // Service
 export { PostcodesClient } from "./PostcodesClient.ts";
+export type {
+	BulkLookupItem,
+	OutcodeResult,
+	PlaceResult,
+	PostcodeResult,
+	PostcodeSearch,
+	ScottishPostcode,
+	TerminatedPostcode,
+} from "./PostcodesClient.ts";
 
 // Config
 export type { ApiConfig } from "./ApiConfig.ts";
 export { defaultApiConfig, makeApiConfig } from "./ApiConfig.ts";
 
 // Error types
-export type { ApiServiceError } from "./Errors.ts";
+export type { ApiErrorEnvelope, ApiServiceError } from "./Errors.ts";
 export {
 	ApiNotFoundError,
 	ApiValidationError,
@@ -14,18 +23,6 @@ export {
 	isApiValidationError,
 } from "./Errors.ts";
 
-// Domain schemas — exported as values (Schema.Struct instances) so consumers
-// can use Schema.toArbitrary, Schema.decodeUnknown etc. directly.
-// TypeScript also infers the types from these same exports.
-export {
-	BulkLookupItem,
-	ErrorEnvelope,
-	OutcodeResult,
-	PlaceResult,
-	PostcodeResult,
-} from "../generated/PostcodesApi.ts";
-
-export {
-	GetScottishPostcode200,
-	LookupTerminatedPostcode200,
-} from "../generated/PostcodesProduction.ts";
+// The upstream 404 error schema remains available for consumers that need to
+// inspect postcodes.io's raw error bodies.
+export { ErrorEnvelope } from "../generated/PostcodesApi.ts";

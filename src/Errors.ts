@@ -4,14 +4,17 @@ import type { SchemaError } from "effect/Schema";
 import type * as HttpClientError from "effect/unstable/http/HttpClientError";
 import type * as RateLimiter from "effect/unstable/persistence/RateLimiter";
 
-import type * as Generated from "../generated/PostcodesApi.ts";
+export interface ApiErrorEnvelope {
+	readonly status: 404;
+	readonly error: string;
+}
 
 export interface ApiNotFoundError {
 	readonly _tag: "ApiNotFoundError";
 	readonly resource: string;
 	readonly identifier: string;
 	readonly message: string;
-	readonly cause: Generated.ErrorEnvelope;
+	readonly cause: ApiErrorEnvelope;
 }
 
 class ApiNotFoundErrorImpl extends Data.Error<ApiNotFoundError> {}
@@ -27,7 +30,7 @@ class ApiValidationErrorImpl extends Data.Error<ApiValidationError> {}
 export const ApiNotFoundError = (
 	resource: string,
 	identifier: string,
-	cause: Generated.ErrorEnvelope,
+	cause: ApiErrorEnvelope,
 ): ApiNotFoundError =>
 	new ApiNotFoundErrorImpl({
 		_tag: "ApiNotFoundError",
@@ -44,11 +47,6 @@ export const ApiValidationError = (field: string, message: string): ApiValidatio
 		message,
 	}) as ApiValidationError;
 
-export type GeneratedNotFoundError =
-	| Generated.PostcodesApiError<"LookupPostcode404", Generated.LookupPostcode404>
-	| Generated.PostcodesApiError<"FindOutcode404", Generated.FindOutcode404>
-	| Generated.PostcodesApiError<"FindPlace404", Generated.FindPlace404>;
-
 export type ApiServiceError =
 	| HttpClientError.HttpClientError
 	| SchemaError
@@ -61,8 +59,3 @@ export const isApiNotFoundError = (input: unknown): input is ApiNotFoundError =>
 
 export const isApiValidationError = (input: unknown): input is ApiValidationError =>
 	Predicate.isTagged(input, "ApiValidationError");
-
-export const isGeneratedNotFoundError = (input: unknown): input is GeneratedNotFoundError =>
-	Predicate.isTagged(input, "LookupPostcode404") ||
-	Predicate.isTagged(input, "FindOutcode404") ||
-	Predicate.isTagged(input, "FindPlace404");

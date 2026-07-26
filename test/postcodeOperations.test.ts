@@ -36,13 +36,44 @@ describe("postcode operations", () => {
 			}).pipe(Effect.provide(clientLayer(baseUrl))),
 		));
 
-	test("returns matching postcodes for a query", () =>
+	test("returns matching postcodes for a text query", () =>
 		Effect.runPromise(
 			Effect.gen(function* () {
 				const { searchPostcodes } = yield* PostcodesClient;
-				const postcodes = yield* searchPostcodes("SW1A");
+				const postcodes = yield* searchPostcodes({ query: "SW1A" });
 
 				expect(postcodes.map((postcode) => postcode.postcode)).toEqual(["SW1A 1AA"]);
+			}).pipe(Effect.provide(clientLayer(baseUrl))),
+		));
+
+	test("returns matching postcodes for a latitude and longitude pair", () =>
+		Effect.runPromise(
+			Effect.gen(function* () {
+				const { searchPostcodes } = yield* PostcodesClient;
+				const postcodes = yield* searchPostcodes({
+					latitude: 51.501,
+					longitude: -0.141,
+				});
+
+				expect(postcodes[0]?.incode).toBe("1AA");
+			}).pipe(Effect.provide(clientLayer(baseUrl))),
+		));
+
+	test("rejects ambiguous and incomplete postcode searches", () =>
+		Effect.runPromise(
+			Effect.gen(function* () {
+				const { searchPostcodes } = yield* PostcodesClient;
+				const ambiguousError = yield* searchPostcodes({
+					query: "SW1A",
+					latitude: 51.501,
+					longitude: -0.141,
+				}).pipe(Effect.match({ onFailure: (error) => error, onSuccess: () => undefined }));
+				const incompleteError = yield* searchPostcodes({ latitude: 51.501 }).pipe(
+					Effect.match({ onFailure: (error) => error, onSuccess: () => undefined }),
+				);
+
+				expect(isApiValidationError(ambiguousError)).toBe(true);
+				expect(isApiValidationError(incompleteError)).toBe(true);
 			}).pipe(Effect.provide(clientLayer(baseUrl))),
 		));
 

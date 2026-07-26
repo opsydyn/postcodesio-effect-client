@@ -3,12 +3,7 @@ import * as HttpApi from "effect/unstable/httpapi/HttpApi";
 import * as HttpApiEndpoint from "effect/unstable/httpapi/HttpApiEndpoint";
 import * as HttpApiGroup from "effect/unstable/httpapi/HttpApiGroup";
 
-import {
-	BulkLookupRequest,
-	OutcodeResult,
-	PlaceResult,
-	PostcodeResult,
-} from "../../generated/PostcodesApi.ts";
+import { BulkLookupRequest } from "../../generated/PostcodesApi.ts";
 
 const ProductionBulkLookupItem = Schema.Struct({
 	query: Schema.String,
@@ -37,7 +32,7 @@ export class PostcodesApiGroup extends HttpApiGroup.make("postcodes")
 	.add(
 		HttpApiEndpoint.get("lookupPostcode", "/postcodes/:postcode", {
 			params: { postcode: Schema.String },
-			success: PostcodeResult,
+			success: Schema.Unknown,
 			error: PostcodeNotFound,
 		}),
 	)
@@ -50,14 +45,14 @@ export class PostcodesApiGroup extends HttpApiGroup.make("postcodes")
 	.add(
 		HttpApiEndpoint.get("findOutcode", "/outcodes/:outcode", {
 			params: { outcode: Schema.String },
-			success: OutcodeResult,
+			success: Schema.Unknown,
 			error: OutcodeNotFound,
 		}),
 	)
 	.add(
 		HttpApiEndpoint.get("findPlace", "/places/:code", {
 			params: { code: Schema.String },
-			success: PlaceResult,
+			success: Schema.Unknown,
 			error: PlaceNotFound,
 		}),
 	) {}
