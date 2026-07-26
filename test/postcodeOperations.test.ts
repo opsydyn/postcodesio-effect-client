@@ -45,4 +45,14 @@ describe("postcode operations", () => {
 				expect(postcodes.map((postcode) => postcode.postcode)).toEqual(["SW1A 1AA"]);
 			}).pipe(Effect.provide(clientLayer(baseUrl))),
 		));
+
+	test("returns postcodes nearest to a postcode", () =>
+		Effect.runPromise(
+			Effect.gen(function* () {
+				const { findNearestPostcodes } = yield* PostcodesClient;
+				const postcodes = yield* findNearestPostcodes("SW1A 1AA");
+
+				expect(postcodes[0]?.distance).toBe(0);
+			}).pipe(Effect.provide(clientLayer(baseUrl))),
+		));
 });

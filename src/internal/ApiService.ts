@@ -82,6 +82,11 @@ export function makeApiServiceFromClient(client: HttpClient.HttpClient, config: 
 				Effect.map((response) => response.result),
 				Effect.mapError((error) => error as ApiServiceError),
 			),
+		findNearestPostcodes: (postcode: string) =>
+			production.NearestPostcode(encodePathSegment(postcode), undefined).pipe(
+				Effect.map((response) => response.result),
+				Effect.mapError((error) => error as ApiServiceError),
+			),
 	};
 }
 

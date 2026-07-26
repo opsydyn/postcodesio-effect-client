@@ -9,6 +9,7 @@ import {
 	lookupNorthernIrishPostcodeResponse,
 	lookupPostcodeResponse,
 	lookupScottishPostcodeResponse,
+	nearestPostcodesResponse,
 	outcodeNotFoundResponse,
 	outcodeResponse,
 	placeResponse,
@@ -24,6 +25,7 @@ const jsonResponse = (body: unknown, status = 200) =>
 
 export const startSpikeMockServer = (port = 0) =>
 	new Elysia()
+		.get("/postcodes/:postcode/nearest", () => nearestPostcodesResponse)
 		.get("/postcodes/:postcode", ({ params }) =>
 			Match.value(params.postcode.replaceAll(" ", "").toUpperCase()).pipe(
 				Match.when("SW1A1AA", () => lookupPostcodeResponse),

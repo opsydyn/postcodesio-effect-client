@@ -103,6 +103,7 @@ describe("@effect-postcodes/client contract", () => {
 						findPlace: (_: string) => Effect.die("not called"),
 						randomPostcode: () => Effect.die("not called"),
 						searchPostcodes: (_: string) => Effect.die("not called"),
+						findNearestPostcodes: (_: string) => Effect.die("not called"),
 					}),
 				),
 			),
