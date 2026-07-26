@@ -15,9 +15,9 @@ import { Effect } from "effect";
 import { PostcodesClient } from "@effect-postcodes/client";
 
 const program = Effect.gen(function* () {
- const { lookupPostcode } = yield* PostcodesClient;
- const result = yield* lookupPostcode("SW1A1AA");
- console.log(result.postcode, result.region);
+	const { lookupPostcode } = yield* PostcodesClient;
+	const result = yield* lookupPostcode("SW1A1AA");
+	console.log(result.postcode, result.region);
 });
 
 Effect.runPromise(program.pipe(Effect.provide(PostcodesClient.Default)));

@@ -1,6 +1,12 @@
 # Assessment: `@effect/openapi-generator` against `postcodes.io`
 
-## Scope
+> **Current direction — 2026-07-26:** the generator-assessment phase is complete.
+> This repository now owns the production-bound `@effect-postcodes/client`
+> package. The historical findings below remain useful evidence, but the former
+> no-go recommendation is superseded. Production release remains gated on full
+> endpoint coverage, live contract compatibility, and working release automation.
+
+## Historical scope
 
 This spike assessed `@effect/openapi-generator@4.0.0-beta.50` against a **narrowed subset** of the upstream `postcodes.io` OpenAPI contract.
 
@@ -11,8 +17,8 @@ We intentionally kept the spike small:
 - 1 POST example
 - 1 failure-path example
 - 1 small contract/integration test
-- generated code isolated under `gen/generated`
-- handwritten wrapper isolated under `gen/client`
+- generated code isolated under `generated/`
+- wrapper code isolated under `src/internal/` and `src/PostcodesClient.ts`
 
 ## What we tested
 
@@ -245,33 +251,26 @@ The spike shows real promise, but the current beta still asks the adopter to abs
 - strict version alignment
 - open response-model issues
 
-## No-go for replacing the handwritten client today
+## Historical recommendation — superseded 2026-07-26
 
-That is the clearest recommendation for this repository right now.
+The original assessment recommended continued experimentation rather than
+production adoption. The project has since made an explicit product decision:
+this repository will become the production `@effect-postcodes/client` package.
 
-Why:
+The earlier generator caveats remain engineering constraints:
 
-- the spike succeeded technically
-- the raw generated output still requires a generated-code-specific lint exemption
-- but the ergonomics are still too beta-shaped
-- the current handwritten client is already aligned with this repo's DDD and schema-boundary rules
-- migrating now would increase toolchain risk without enough payoff yet
-
-## Conditional go for continued experimentation
-
-I **would** keep this spike and revisit later if these conditions improve:
-
-- `@effect/openapi-generator` publishes clearer docs
-- runtime packaging becomes smoother
-- response representation work like `#1979` lands and ships
-- we bundle/vendor the full upstream `postcodes.io` spec cleanly
+- generated code stays replaceable and isolated
+- the public wrapper remains the stable consumer boundary
+- response-representation limitations need focused compatibility fixtures
+- the multi-file upstream spec must be bundled before generation
+- production release requires live compatibility evidence across the UK
 
 ## Bottom line
 
-- **For this repo today:** no-go for migration
-- **For future evaluation:** yes, worth tracking and re-testing
-- **For small internal JSON APIs:** promising enough to keep exploring behind a wrapper
-- **Without source rewriting:** the raw generated output can work here if generated-code lint exceptions are scoped narrowly
+- **Product direction:** production package with full supported endpoint coverage
+- **Architecture:** generated transport behind a stable wrapper and public barrel
+- **Release status:** not yet ready; contract correctness and automation gates remain
+- **Generated output:** usable without source rewriting when generated-code lint exceptions are scoped narrowly
 
 ## Evidence from this spike
 
@@ -328,12 +327,12 @@ Bumped `effect`, `@effect/platform-node`, and `@effect/openapi-generator` from
 
 - clean `bun install`, clean `tsc --noEmit`, all tests passing with no source
   changes required for compatibility
-- regenerating `gen/generated/PostcodesSpike.ts` with the bumped generator
+- regenerating `generated/PostcodesApi.ts` with the bumped generator
   produces one cosmetic diff: the generic bound on `decodeSuccess`/`decodeError`
   narrows from `Schema.Top` to `Schema.Constraint` (generator-side change from
   beta.86's Schema type-performance work) — not hand-applied, a natural
   byproduct of `bun run generate`
-- added `RateLimiterLive` (`gen/client/RateLimiting.ts`), built on effect
+- added `RateLimiterLive` (`src/internal/RateLimiting.ts`), built on effect
   beta.88's `RateLimiterStore` adaptive consume/feedback API plus
   `HttpClient.withRateLimiter`, so all four client calls now back off
   automatically on postcodes.io rate-limit responses instead of failing
@@ -390,6 +389,29 @@ changes that flowed into `generated/PostcodesFull.ts`:
   Scottish Postcode Directory model (~50 fields)
 
 Regenerated `generated/PostcodesFull.ts` against the refreshed bundle: clean
-`tsc --noEmit`, all tests still pass. None of this touches the narrowed
-spec/client — `src/client/`, `src/server/` only use the four narrowed
-operations, not the full client's extra surface.
+`tsc --noEmit`, all tests still pass. This did not update the transitional
+four-endpoint public client, which uses `generated/PostcodesApi.ts` through
+`src/internal/ApiService.ts` and `src/PostcodesClient.ts`.
+
+## Update: 2026-07-26 — production direction and current contract gap
+
+The project has moved beyond assessment and now targets a production package
+covering the full supported `postcodes.io` endpoint set.
+
+Fresh verification established:
+
+- the current upstream 33-file spec fetch and bundle match the vendored copy
+- narrowed and full generated artefacts reproduce deterministically
+- local typecheck and all 14 tests pass
+- package build, package lint, documentation build, and an isolated Node
+  consumer smoke test pass
+- a live Northern Irish lookup for `BT1 5GS` fails in the transitional public
+  client because `openapi/spec.yaml` requires `msoa: string` while the API and
+  current full upstream schema allow `null`
+- CI, release, and Changesets target `master` while the repository default
+  branch is `main`
+
+These findings define the production cutover work: derive the public contract
+from the bundled full upstream schema, cover representative UK live responses,
+expand the stable wrapper across the full endpoint set, and repair the release
+gates before publishing.
