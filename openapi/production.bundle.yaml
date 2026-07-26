@@ -221,7 +221,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description:
                           The OS grid reference easting (X-coordinate) to 1 metre resolution.
                           Relates to the British National Grid for GB and the
@@ -233,7 +232,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description: The OS grid reference northing (Y-coordinate) to 1 metre
                           resolution. Relates to the British National Grid for
                           GB and the Irish National Grid for Northern Ireland.
@@ -283,7 +281,6 @@ paths:
                         type:
                           - number
                           - "null"
-                        format: double
                         description: WGS84 longitude coordinate (east-west position). May be null if
                           geolocation unavailable.
                         example: -0.12767
@@ -292,7 +289,6 @@ paths:
                         type:
                           - number
                           - "null"
-                        format: double
                         description:
                           WGS84 latitude coordinate (north-south position). May be null if
                           geolocation unavailable.
@@ -395,7 +391,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description:
                           ONS Index of Multiple Deprivation (IMD) rank for this postcode's
                           LSOA. Lower ranks correspond to more deprived areas.
@@ -426,7 +421,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description:
                           The Senedd Cymru (Welsh Parliament) constituency number for this
                           postcode. Only applicable to Welsh postcodes; null
@@ -1098,7 +1092,6 @@ paths:
                               type:
                                 - integer
                                 - "null"
-                              format: int32
                               description:
                                 The OS grid reference easting (X-coordinate) to 1 metre resolution.
                                 Relates to the British National Grid for GB and
@@ -1111,7 +1104,6 @@ paths:
                               type:
                                 - integer
                                 - "null"
-                              format: int32
                               description: The OS grid reference northing (Y-coordinate) to 1 metre
                                 resolution. Relates to the British National Grid
                                 for GB and the Irish National Grid for Northern
@@ -1164,7 +1156,6 @@ paths:
                               type:
                                 - number
                                 - "null"
-                              format: double
                               description:
                                 WGS84 longitude coordinate (east-west position). May be null if
                                 geolocation unavailable.
@@ -1174,7 +1165,6 @@ paths:
                               type:
                                 - number
                                 - "null"
-                              format: double
                               description:
                                 WGS84 latitude coordinate (north-south position). May be null if
                                 geolocation unavailable.
@@ -1282,7 +1272,6 @@ paths:
                               type:
                                 - integer
                                 - "null"
-                              format: int32
                               description:
                                 ONS Index of Multiple Deprivation (IMD) rank for this postcode's
                                 LSOA. Lower ranks correspond to more deprived
@@ -1314,7 +1303,6 @@ paths:
                               type:
                                 - integer
                                 - "null"
-                              format: int32
                               description:
                                 The Senedd Cymru (Welsh Parliament) constituency number for this
                                 postcode. Only applicable to Welsh postcodes;
@@ -1911,7 +1899,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description:
                           The OS grid reference easting (X-coordinate) to 1 metre resolution.
                           Relates to the British National Grid for GB and the
@@ -1923,7 +1910,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description: The OS grid reference northing (Y-coordinate) to 1 metre
                           resolution. Relates to the British National Grid for
                           GB and the Irish National Grid for Northern Ireland.
@@ -1973,7 +1959,6 @@ paths:
                         type:
                           - number
                           - "null"
-                        format: double
                         description: WGS84 longitude coordinate (east-west position). May be null if
                           geolocation unavailable.
                         example: -0.12767
@@ -1982,7 +1967,6 @@ paths:
                         type:
                           - number
                           - "null"
-                        format: double
                         description:
                           WGS84 latitude coordinate (north-south position). May be null if
                           geolocation unavailable.
@@ -2085,7 +2069,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description:
                           ONS Index of Multiple Deprivation (IMD) rank for this postcode's
                           LSOA. Lower ranks correspond to more deprived areas.
@@ -2116,7 +2099,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description:
                           The Senedd Cymru (Welsh Parliament) constituency number for this
                           postcode. Only applicable to Welsh postcodes; null
@@ -2704,7 +2686,6 @@ paths:
                                   type:
                                     - integer
                                     - "null"
-                                  format: int32
                                   description:
                                     The OS grid reference easting (X-coordinate) to 1 metre resolution.
                                     Relates to the British National Grid for GB
@@ -2717,7 +2698,6 @@ paths:
                                   type:
                                     - integer
                                     - "null"
-                                  format: int32
                                   description:
                                     The OS grid reference northing (Y-coordinate) to 1 metre
                                     resolution. Relates to the British National
@@ -2771,7 +2751,6 @@ paths:
                                   type:
                                     - number
                                     - "null"
-                                  format: double
                                   description:
                                     WGS84 longitude coordinate (east-west position). May be null if
                                     geolocation unavailable.
@@ -2781,7 +2760,6 @@ paths:
                                   type:
                                     - number
                                     - "null"
-                                  format: double
                                   description:
                                     WGS84 latitude coordinate (north-south position). May be null if
                                     geolocation unavailable.
@@ -2892,7 +2870,6 @@ paths:
                                   type:
                                     - integer
                                     - "null"
-                                  format: int32
                                   description:
                                     ONS Index of Multiple Deprivation (IMD) rank for this postcode's
                                     LSOA. Lower ranks correspond to more
@@ -2925,7 +2902,6 @@ paths:
                                   type:
                                     - integer
                                     - "null"
-                                  format: int32
                                   description:
                                     The Senedd Cymru (Welsh Parliament) constituency number for this
                                     postcode. Only applicable to Welsh
@@ -3500,7 +3476,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description:
                           The OS grid reference easting (X-coordinate) to 1 metre resolution.
                           Relates to the British National Grid for GB and the
@@ -3512,7 +3487,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description: The OS grid reference northing (Y-coordinate) to 1 metre
                           resolution. Relates to the British National Grid for
                           GB and the Irish National Grid for Northern Ireland.
@@ -3562,7 +3536,6 @@ paths:
                         type:
                           - number
                           - "null"
-                        format: double
                         description: WGS84 longitude coordinate (east-west position). May be null if
                           geolocation unavailable.
                         example: -0.12767
@@ -3571,7 +3544,6 @@ paths:
                         type:
                           - number
                           - "null"
-                        format: double
                         description:
                           WGS84 latitude coordinate (north-south position). May be null if
                           geolocation unavailable.
@@ -3674,7 +3646,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description:
                           ONS Index of Multiple Deprivation (IMD) rank for this postcode's
                           LSOA. Lower ranks correspond to more deprived areas.
@@ -3705,7 +3676,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description:
                           The Senedd Cymru (Welsh Parliament) constituency number for this
                           postcode. Only applicable to Welsh postcodes; null
@@ -4228,7 +4198,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description: OS National Grid easting (1m resolution). Null for postcodes
                           without a grid reference (e.g. Channel Islands, Isle
                           of Man) or that were terminated before a reference was
@@ -4239,7 +4208,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description: OS National Grid northing (1m resolution). Null for postcodes
                           without a grid reference (e.g. Channel Islands, Isle
                           of Man) or that were terminated before a reference was
@@ -4250,7 +4218,6 @@ paths:
                         type:
                           - number
                           - "null"
-                        format: double
                         description: WGS84 longitude coordinate of the postcode location. Null if no
                           grid reference is available.
                         example: -2.496903
@@ -4261,7 +4228,6 @@ paths:
                         type:
                           - number
                           - "null"
-                        format: double
                         description:
                           WGS84 latitude coordinate of the postcode location. Null if no grid
                           reference is available.
@@ -4422,7 +4388,6 @@ paths:
                         type:
                           - number
                           - "null"
-                        format: double
                         description: WGS84 longitude.
                         example: -2.1025
                       latitude:
@@ -4430,7 +4395,6 @@ paths:
                         type:
                           - number
                           - "null"
-                        format: double
                         description: WGS84 latitude.
                         example: 57.14945
                       eastings:
@@ -4438,7 +4402,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description: OS National Grid easting (1m resolution).
                         example: 393859
                       northings:
@@ -4446,7 +4409,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description: OS National Grid northing (1m resolution).
                         example: 806073
                       split_indicator:
@@ -4810,7 +4772,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description: SIMD 2020 rank for the postcode's Data Zone (1 = most deprived,
                           6976 = least deprived).
                         example: 6414
@@ -4834,7 +4795,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description: Number of households recorded against this postcode at the 2022
                           census. May be 0 for empty or zero-suppressed
                           postcodes.
@@ -4844,7 +4804,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description: Number of households recorded at the 2011 census.
                         example: 8
                       census_household_count_2001:
@@ -4852,7 +4811,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description: Number of households recorded at the 2001 census.
                         example: 12
                       census_household_count_1991:
@@ -4860,7 +4818,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description: Number of households recorded at the 1991 census.
                         example: null
                       census_population_count:
@@ -4868,7 +4825,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description: Resident population recorded against this postcode at the 2022
                           census.
                         example: 0
@@ -4877,7 +4833,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description: Resident population recorded at the 2011 census.
                         example: 18
                       census_population_count_2001:
@@ -4885,7 +4840,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description: Resident population recorded at the 2001 census.
                         example: 26
                       census_population_count_1991:
@@ -4893,7 +4847,6 @@ paths:
                         type:
                           - integer
                           - "null"
-                        format: int32
                         description: Resident population recorded at the 1991 census.
                         example: null
                       never_digitised:
@@ -5230,7 +5183,6 @@ paths:
                             type:
                               - number
                               - "null"
-                            format: int32
                             description:
                               Ordnance Survey eastings coordinate (1m resolution). Returns 0 if
                               location unavailable.
@@ -5240,7 +5192,6 @@ paths:
                             type:
                               - number
                               - "null"
-                            format: int32
                             description:
                               Ordnance Survey northings coordinate (1m resolution). Returns 0 if
                               location unavailable.
@@ -5276,7 +5227,6 @@ paths:
                             type:
                               - number
                               - "null"
-                            format: double
                             description: WGS84 longitude coordinate. May be null if location unavailable.
                             example: -0.132066
                           latitude:
@@ -5284,7 +5234,6 @@ paths:
                             type:
                               - number
                               - "null"
-                            format: double
                             description: WGS84 latitude coordinate. May be null if location unavailable.
                             example: 51.50464
                           country:

@@ -29,6 +29,11 @@ const fixture: ProductionSpec = {
 				type: "string",
 				nullable: true,
 			},
+			Population: {
+				type: "integer",
+				format: "int32",
+				nullable: true,
+			},
 		},
 	},
 };
@@ -62,6 +67,9 @@ describe("normalizeProductionSpec", () => {
 		});
 		expect(output.components.schemas.Postcode).toEqual({
 			type: ["string", "null"],
+		});
+		expect(output.components.schemas.Population).toEqual({
+			type: ["integer", "null"],
 		});
 		expect(output.paths["/places"].get.parameters).toEqual([
 			{

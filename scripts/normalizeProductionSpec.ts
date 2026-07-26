@@ -36,10 +36,13 @@ const cloneAndNormalizeNullable = (value: unknown): unknown => {
 	}
 
 	const { nullable: _nullable, ...withoutNullable } = output;
+	const isNullableNumber = output.type === "number" || output.type === "integer";
+	const { format: _format, ...withoutFormat } = withoutNullable;
+	const normalizedOutput = isNullableNumber ? withoutFormat : withoutNullable;
 
 	if (typeof output.type === "string") {
 		return {
-			...withoutNullable,
+			...normalizedOutput,
 			type: [output.type, "null"],
 		};
 	}
