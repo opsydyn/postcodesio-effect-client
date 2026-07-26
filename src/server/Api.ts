@@ -4,12 +4,16 @@ import * as HttpApiEndpoint from "effect/unstable/httpapi/HttpApiEndpoint";
 import * as HttpApiGroup from "effect/unstable/httpapi/HttpApiGroup";
 
 import {
-	BulkLookupItem,
 	BulkLookupRequest,
 	OutcodeResult,
 	PlaceResult,
 	PostcodeResult,
 } from "../../generated/PostcodesApi.ts";
+
+const ProductionBulkLookupItem = Schema.Struct({
+	query: Schema.String,
+	result: Schema.Unknown,
+});
 
 export class PostcodeNotFound extends Schema.TaggedErrorClass<PostcodeNotFound>()(
 	"PostcodeNotFound",
@@ -40,7 +44,7 @@ export class PostcodesApiGroup extends HttpApiGroup.make("postcodes")
 	.add(
 		HttpApiEndpoint.post("bulkLookupPostcodes", "/postcodes", {
 			payload: BulkLookupRequest,
-			success: Schema.Array(BulkLookupItem),
+			success: Schema.Array(ProductionBulkLookupItem),
 		}),
 	)
 	.add(

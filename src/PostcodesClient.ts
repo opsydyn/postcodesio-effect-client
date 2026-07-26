@@ -4,14 +4,10 @@ import * as Layer from "effect/Layer";
 import * as FetchHttpClient from "effect/unstable/http/FetchHttpClient";
 import type * as HttpClient from "effect/unstable/http/HttpClient";
 
-import type {
-	BulkLookupItem,
-	OutcodeResult,
-	PlaceResult,
-	PostcodeResult,
-} from "../generated/PostcodesApi.ts";
+import type { OutcodeResult, PlaceResult, PostcodeResult } from "../generated/PostcodesApi.ts";
 import type {
 	NearestPostcode200,
+	BulkPostcodeLookup200,
 	PlaceQuery200,
 	RandomPlace200,
 	PostcodeLookup200,
@@ -28,7 +24,7 @@ export class PostcodesClient extends Context.Service<
 		readonly lookupPostcode: (postcode: string) => Effect.Effect<PostcodeResult, ApiServiceError>;
 		readonly bulkLookupPostcodes: (
 			postcodes: readonly string[],
-		) => Effect.Effect<readonly BulkLookupItem[], ApiServiceError>;
+		) => Effect.Effect<BulkPostcodeLookup200["result"], ApiServiceError>;
 		readonly findOutcode: (outcode: string) => Effect.Effect<OutcodeResult, ApiServiceError>;
 		readonly findPlace: (code: string) => Effect.Effect<PlaceResult, ApiServiceError>;
 		readonly randomPostcode: () => Effect.Effect<RandomPostcode200["result"], ApiServiceError>;

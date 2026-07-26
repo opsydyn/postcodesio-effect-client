@@ -58,7 +58,7 @@ export function makeApiServiceFromClient(client: HttpClient.HttpClient, config: 
 				Effect.mapError(mapGeneratedError("postcode", postcode)),
 			),
 		bulkLookupPostcodes: (postcodes: ReadonlyArray<string>) =>
-			generated.bulkLookupPostcodes({ payload: { postcodes } }).pipe(
+			production.BulkPostcodeLookup({ payload: { postcodes } }).pipe(
 				Effect.map((response) => response.result),
 				Effect.mapError((error) => error as ApiServiceError),
 			),

@@ -2,7 +2,6 @@ import { Match } from "effect";
 import { Elysia } from "elysia";
 
 import {
-	bulkLookupPostcodesResponse,
 	findPlaceNotFoundResponse,
 	findPlaceResponse,
 	lookupPostcodeNotFoundResponse,
@@ -13,6 +12,7 @@ import {
 	outcodeNotFoundResponse,
 	outcodeResponse,
 	placeResponse,
+	productionBulkLookupPostcodesResponse,
 	randomPostcodeResponse,
 	searchPostcodesResponse,
 	searchPlacesResponse,
@@ -36,7 +36,7 @@ export const startSpikeMockServer = (port = 0) =>
 				Match.orElse(() => jsonResponse(lookupPostcodeNotFoundResponse, 404)),
 			),
 		)
-		.post("/postcodes", () => bulkLookupPostcodesResponse)
+		.post("/postcodes", () => productionBulkLookupPostcodesResponse)
 		.get("/postcodes", () => searchPostcodesResponse)
 		.get("/random/postcodes", () => randomPostcodeResponse)
 		.get("/places", () => searchPlacesResponse)

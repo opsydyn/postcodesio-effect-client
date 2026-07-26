@@ -103,6 +103,14 @@ export const searchPostcodesResponse = {
 	result: [productionPostcodeResult],
 } satisfies PostcodesProduction.PostcodeLookup200;
 
+export const productionBulkLookupPostcodesResponse = {
+	status: 200,
+	result: [
+		{ query: "SW1A1AA", result: productionPostcodeResult },
+		{ query: "ZZ99ZZ", result: null },
+	],
+} satisfies PostcodesProduction.BulkPostcodeLookup200;
+
 export const nearestPostcodesResponse = {
 	status: 200,
 	result: [{ ...productionPostcodeResult, distance: 0 }],
