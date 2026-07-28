@@ -48,7 +48,7 @@
 		"generate:full": "openapigen --spec openapi/full-upstream/openapi.bundle.yaml --name PostcodesFull --format httpclient > generated/PostcodesFull.ts",
 		"verify:generation": "bun run scripts/verifyGeneration.ts",
 		"typecheck": "tsc --noEmit",
-		"test": "bun test test/contract.test.ts test/fullClient.elysia.test.ts test/rateLimiting.test.ts test/schema.property.test.ts test/publicSchemas.test.ts test/serverOpenApi.test.ts test/client.property.test.ts test/normalizeProductionSpec.test.ts test/productionGeneration.test.ts test/postcodeOperations.test.ts test/locationOperations.test.ts test/specSyncPolicy.test.ts test/packageIdentity.test.ts",
+		"test": "bun test test/contract.test.ts test/fullClient.elysia.test.ts test/rateLimiting.test.ts test/schema.property.test.ts test/publicSchemas.test.ts test/serverOpenApi.test.ts test/client.property.test.ts test/normalizeProductionSpec.test.ts test/productionGeneration.test.ts test/postcodeOperations.test.ts test/locationOperations.test.ts test/specSyncPolicy.test.ts test/packageIdentity.test.ts test/flueOpenAiSync.test.ts",
 		"test:live": "bun test test/liveClient.test.ts",
 		"check": "bun run typecheck && bun run test",
 		"fmt": "bun node_modules/oxfmt/dist/cli.js --config oxfmt.config.ts",

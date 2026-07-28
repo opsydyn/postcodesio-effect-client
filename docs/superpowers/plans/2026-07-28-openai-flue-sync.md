@@ -33,7 +33,7 @@
 - Consumes: `.flue/agents/spec-sync.ts` as the source of Flue model selection and `.github/workflows/sync-upstream.yml` as the only scheduled sync credential boundary.
 - Produces: a keyless local regression test that proves the agent uses `openai/gpt-5.5`, the workflow exposes `OPENAI_API_KEY`, and no active Anthropic key reference remains.
 
-- [ ] **Step 1: Write the failing configuration-boundary test**
+- [x] **Step 1: Write the failing configuration-boundary test**
 
 Create `test/flueOpenAiSync.test.ts`:
 
@@ -55,13 +55,13 @@ test("runs upstream sync through OpenAI with no Anthropic credential", async () 
 });
 ```
 
-- [ ] **Step 2: Run the focused test and confirm the provider mismatch**
+- [x] **Step 2: Run the focused test and confirm the provider mismatch**
 
 Run: `bun test test/flueOpenAiSync.test.ts`
 
 Expected: FAIL because the agent still contains `anthropic/claude-sonnet-4-6` and the workflow still contains `ANTHROPIC_API_KEY`.
 
-- [ ] **Step 3: Select the direct OpenAI model in the agent**
+- [x] **Step 3: Select the direct OpenAI model in the agent**
 
 In `.flue/agents/spec-sync.ts`, replace the model declaration exactly:
 
@@ -71,7 +71,7 @@ model: "openai/gpt-5.5",
 
 Leave the instructions, four tools, and `sandbox: local()` unchanged.
 
-- [ ] **Step 4: Replace the workflow credential boundary**
+- [x] **Step 4: Replace the workflow credential boundary**
 
 In `.github/workflows/sync-upstream.yml`, replace the provider environment mapping with:
 
@@ -83,11 +83,11 @@ In `.github/workflows/sync-upstream.yml`, replace the provider environment mappi
 
 Do not add a fallback credential or a literal key.
 
-- [ ] **Step 5: Add the focused test to the standard local suite**
+- [x] **Step 5: Add the focused test to the standard local suite**
 
 Append `test/flueOpenAiSync.test.ts` to the explicit `bun test` command in `package.json` so CI and normal `bun run check` runs preserve the provider boundary.
 
-- [ ] **Step 6: Run focused and local verification**
+- [x] **Step 6: Run focused and local verification**
 
 Run:
 
@@ -101,7 +101,7 @@ bunx --no-install flue build --target node --output /tmp/effect-postcodes-flue-o
 
 Expected: the focused test and the full local suite pass; Flue builds successfully; no command requires an API key or calls OpenAI.
 
-- [ ] **Step 7: Commit the migration**
+- [x] **Step 7: Commit the migration**
 
 ```bash
 git add .flue/agents/spec-sync.ts .github/workflows/sync-upstream.yml package.json test/flueOpenAiSync.test.ts

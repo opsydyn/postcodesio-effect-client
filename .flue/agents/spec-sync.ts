@@ -8,7 +8,7 @@ import {
 } from "../tools/index.ts";
 
 export default defineAgent(() => ({
-	model: "anthropic/claude-sonnet-4-6",
+	model: "openai/gpt-5.5",
 	instructions: `You are a release automation agent for the @opsydyn/effect-postcodes-client npm package.
 
 Your job: sync the postcodes.io upstream OpenAPI spec and open a pull request if anything changed.
