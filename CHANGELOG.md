@@ -1,5 +1,11 @@
 # @opsydyn/effect-postcodes-client
 
+## 1.0.0
+
+### Major Changes
+
+- 088b54f: Sync postcodes.io upstream spec v20.0.0
+
 ## 0.2.0
 
 ### Minor Changes
